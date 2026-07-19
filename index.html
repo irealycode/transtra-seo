@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Transco — Suivi du bus scolaire en temps réel</title>
+<meta name="description" content="Transco met les bus de votre école en direct : les parents suivent le bus de leur enfant, l’école voit toute sa flotte, et chaque embarquement est confirmé." />
+<link rel="icon" type="image/svg+xml" href="assets/icon_school.svg" />
+<link rel="preload" href="assets/fonts/figtree-latin.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ===== sprite : icônes Lucide du produit + logotype Transco ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-layout-dashboard" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></symbol>
+    <symbol id="i-radio" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.247 7.761a6 6 0 0 1 0 8.478"/><path d="M19.075 4.933a10 10 0 0 1 0 14.134"/><path d="M4.925 19.067a10 10 0 0 1 0-14.134"/><path d="M7.753 16.239a6 6 0 0 1 0-8.478"/><circle cx="12" cy="12" r="2"/></symbol>
+    <symbol id="i-bus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6v6"/><path d="M15 6v6"/><path d="M2 12h19.6"/><path d="M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3"/><circle cx="7" cy="18" r="2"/><path d="M9 18h5"/><circle cx="16" cy="18" r="2"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></symbol>
+    <symbol id="i-route" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></symbol>
+    <symbol id="i-calendar-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 14v2.2l1.6 1"/><path d="M16 2v4"/><path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5"/><path d="M3 10h5"/><path d="M8 2v4"/><circle cx="16" cy="16" r="6"/></symbol>
+    <symbol id="i-triangle-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+    <symbol id="i-user-round" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></symbol>
+    <symbol id="i-bar-chart-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></symbol>
+    <symbol id="i-navigation" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></symbol>
+    <symbol id="i-qr-code" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></symbol>
+    <symbol id="i-shield-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-languages" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+    <symbol id="i-bus-front" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6 2 7"/><path d="M10 6h4"/><path d="m22 7-2-1"/><rect width="16" height="16" x="4" y="3" rx="2"/><path d="M4 11h16"/><path d="M8 15h.01"/><path d="M16 15h.01"/><path d="M6 19v2"/><path d="M18 21v-2"/></symbol>
+    <symbol id="i-user-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 11 2 2 4-4"/><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-wifi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h.01"/><path d="M2 8.82a15 15 0 0 1 20 0"/><path d="M5 12.859a10 10 0 0 1 14 0"/><path d="M8.5 16.429a5 5 0 0 1 7 0"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+
+    <!-- Logotype « Transco », porté de web/src/components/wordmark.tsx (variante école).
+         La barre d’accent lit --wm-accent pour passer en blanc sur fond teal. -->
+    <symbol id="w-transco" viewBox="-977.3115 510.0994 599.3319 112.6888">
+      <path d="M -896.19 371.189 C -904.62 371.209 -913.05 371.219 -921.48 371.239 C -937.83 371.079 -961.94 367.656 -970.51 373.67 C -972.59 363.74 -962.36 347.319 -952.71 345.579 C -945.79 344.339 -937.96 345.259 -930.94 345.259 C -916.27 345.279 -901.61 345.309 -886.94 345.299 C -874.72 345.299 -856.35 347.101 -846.68 342.523 C -846.98 345.833 -849.09 353.282 -849.62 356.579 C -852.36 373.486 -870.58 370.819 -896.19 371.189 Z" fill="var(--wm-accent, #006a80)" fill-rule="evenodd" transform="matrix(1, 0, 0, 1, -6.529596902870708, 167.5763422187617)"/>
+      <path d="M -522.62 415.699 C -519.998 404.617 -515.509 384.427 -506.278 377.448 C -499.483 372.31 -496.551 373.624 -489.63 373.269 C -480.22 373.269 -470.8 373.269 -461.38 373.269 C -462.7 379.629 -464.02 385.989 -465.34 392.349 C -474.87 392.349 -484.41 392.349 -493.94 392.349 C -496.32 403.169 -499.07 413.919 -501.29 424.779 C -502.03 428.399 -503.58 434.439 -499.25 436.579 C -492.76 439.779 -482.18 436.409 -475.09 437.749 C -476.21 443.079 -477.32 448.419 -478.44 453.749 C -489.23 456.159 -518.04 456.859 -524.32 445.599 C -529.36 436.569 -524.8 424.919 -522.62 415.699 Z M -896.19 371.189 C -902.5 398.709 -908.81 426.229 -915.12 453.749 C -923.52 453.749 -931.92 453.749 -940.33 453.749 C -934.05 426.249 -927.76 398.749 -921.48 371.239 C -913.05 371.219 -904.62 371.209 -896.19 371.189 Z M -809.94 373.449 C -811.27 379.739 -812.61 386.019 -813.94 392.309 C -822 392.449 -834.74 389.769 -841.75 394.429 C -847.02 397.939 -847.17 406.159 -848.48 411.719 C -851.81 425.859 -854.56 440.139 -858.03 454.239 C -866.16 454.239 -874.29 454.239 -882.42 454.239 C -878.24 437.129 -874.57 419.829 -870.7 402.619 C -868.65 393.529 -866.97 383.149 -858.39 377.779 C -845.68 369.839 -824.22 372.449 -809.94 373.449 Z M -809.97 373.416 C -794.67 372.896 -766.25 373.229 -750.94 373.259 C -742.93 373.269 -733.16 373.229 -727.05 379.359 C -721.27 385.149 -721.7 393.389 -723.22 400.799 C -726.82 418.339 -730.06 436.659 -735.39 453.749 C -744.26 455.679 -754.81 454.319 -763.94 454.309 C -776.3 454.289 -789.65 455.739 -801.9 454.099 C -809.35 453.099 -817.04 448.649 -818.54 440.749 C -819.31 436.699 -818.8 432.439 -817.79 428.509 C -809.21 395.139 -771.54 408.699 -746.78 404.749 C -746.78 401.419 -746.78 398.079 -746.78 394.749 C -750.92 391.029 -757.72 392.329 -762.94 392.339 C -775.04 392.369 -801.81 393.128 -813.96 392.313 C -812.46 386.183 -811.48 379.546 -809.97 373.416 Z M -638.94 454.239 C -646.75 454.239 -654.56 454.239 -662.37 454.239 C -660.01 440.399 -656.55 426.489 -653.31 412.809 C -652.17 407.969 -648.56 399.829 -652.01 395.309 C -655.63 390.559 -675.93 391.909 -681.6 392.749 C -686.38 413.249 -691.16 433.739 -695.94 454.239 C -703.81 454.239 -711.67 454.239 -719.54 454.239 C -713.56 427.409 -707.57 400.579 -701.59 373.749 C -693.09 372.239 -683.61 373.249 -674.94 373.249 C -663.21 373.259 -647.9 370.829 -637.09 376.369 C -629.07 380.479 -625.48 388.929 -626.5 397.749 C -628.71 416.699 -634.98 435.579 -638.94 454.239 Z M -529.94 373.709 C -531.27 379.839 -532.61 385.969 -533.94 392.099 C -549.15 393.239 -564.68 392.189 -579.94 392.309 C -586.21 392.349 -593.89 395.049 -590.28 402.749 C -585.97 405.969 -580.09 405.159 -574.94 405.229 C -557.55 405.459 -530.1 403.729 -534.54 429.699 C -539.61 459.419 -572.46 454.289 -594.94 454.309 C -604.38 454.309 -615.33 455.749 -624.49 453.749 C -623.27 448.419 -622.06 443.079 -620.85 437.749 C -603.71 434.649 -585.3 439.009 -567.94 437.159 C -561.29 436.449 -557.67 429.559 -560.73 423.749 C -575.19 415.049 -614.83 432.169 -614.76 402.749 C -614.75 399.349 -614.33 396.059 -613.34 392.809 C -605.73 367.969 -572.84 373.239 -552.94 373.249 C -545.36 373.249 -537.42 372.609 -529.94 373.709 Z M -750.94 419.729 C -761.36 418.839 -794.2 414.739 -793.22 431.729 C -792.93 436.859 -787.97 437.219 -783.94 437.259 C -774.3 437.339 -764.57 437.549 -754.94 437.129 C -753.61 431.329 -752.27 425.529 -750.94 419.729 Z" fill="currentColor" fill-rule="evenodd" transform="matrix(1, 0, 0, 1, -6.529596902870708, 167.5763422187617)"/>
+      <path d="M -459.69 415.219 C -457.06 404.137 -452.57 383.947 -443.35 376.968 C -436.55 371.83 -433.62 373.144 -426.69 372.789 C -417.29 372.789 -407.87 372.789 -398.44 372.789 C -399.76 379.149 -401.08 385.509 -402.4 391.869 C -411.94 391.869 -421.48 391.869 -431 391.869 C -433.38 402.689 -436.13 413.439 -438.36 424.299 C -439.1 427.919 -437.44 435.391 -432.63 435.618 C -424.29 436.01 -419.25 435.929 -412.15 437.269 C -413.27 442.599 -419.43 449.422 -420.55 454.752 C -431.71 455.392 -455.11 456.379 -461.38 445.119 C -466.43 436.089 -461.87 424.439 -459.69 415.219 Z" fill="currentColor" fill-rule="evenodd" transform="matrix(1, 0, 0, 1, -6.529596902870708, 167.5763422187617)"/>
+      <path d="M -432.69 415.17 C -430.07 404.088 -425.58 383.898 -416.36 376.919 C -409.56 371.781 -406.63 373.095 -399.7 372.74 C -390.3 372.74 -380.88 372.74 -371.45 372.74 C -372.77 379.1 -374.1 385.46 -375.42 391.82 C -384.94 391.82 -394.49 391.82 -404.01 391.82 C -406.39 402.64 -409.14 413.39 -411.37 424.25 C -412.11 427.87 -409.85 434.36 -405.2 435.704 C -398.32 437.697 -391.82 435.062 -384.74 436.402 C -385.86 441.732 -387.63 449.112 -388.75 454.442 C -410.88 455.275 -428.12 456.33 -434.39 445.07 C -439.44 436.04 -434.88 424.39 -432.69 415.17 Z" fill="currentColor" fill-rule="evenodd" style="transform-origin:-404.065px 413.829px" transform="matrix(-1, 0, 0, -1, -6.52961419, 167.57636981)"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ================================ header ================================ -->
+<header class="site-header" id="top">
+  <div class="container">
+    <a class="brand" href="#top" aria-label="Transco — accueil">
+      <!-- <img class="brand-icon" src="assets/icon_school.svg" alt="" /> -->
+      <svg class="wordmark" role="img" aria-label="Transco"><use href="#w-transco"/></svg>
+    </a>
+    <nav class="site-nav" aria-label="Navigation principale">
+      <a href="#fonctionnement">Fonctionnement</a>
+      <a href="#parents">Parents</a>
+      <a href="#console">Console école</a>
+      <a href="#securite">Sécurité</a>
+    </nav>
+    <a class="btn btn-primary header-cta" href="#demo">Demander une démo</a>
+  </div>
+</header>
+
+<main>
+<!-- ================================= hero ================================= -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-copy">
+      <span class="hero-kicker">
+        <img src="assets/icon_school.svg" alt="" />
+        Suivi du bus scolaire
+      </span>
+      <h1>Chaque trajet scolaire, <span class="accent">en direct.</span></h1>
+      <!-- <p class="hero-sub">
+        Suivez chaque bus en temps réel — du moment où le conducteur commence son
+        service jusqu’au dernier élève rentré chez lui. Les parents voient le bus
+        arriver, l’école voit toute sa flotte.
+      </p> -->
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="#demo">Demander une démo</a>
+        <a class="btn btn-ghost" href="#fonctionnement">Comment ça marche</a>
+      </div>
+      <p class="hero-note">Transco est le volet scolaire de la plateforme Transtra.</p>
+    </div>
+
+    <!-- Maquette : console école (composants réels du tableau de bord) -->
+    <div class="hero-mock" role="img" aria-label="Aperçu de la console école : barre latérale de navigation, indicateurs de flotte et carte en direct avec trois bus suivis.">
+      <aside class="mock-side">
+        <div class="mock-side-brand">
+          <svg role="img" aria-hidden="true"><use href="#w-transco"/></svg>
+        </div>
+        <nav class="mock-nav">
+          <div>
+            <div class="mock-nav-title">Exploitation</div>
+            <div class="mock-nav-item active"><svg class="icon"><use href="#i-layout-dashboard"/></svg>Vue d’ensemble</div>
+            <div class="mock-nav-item"><svg class="icon"><use href="#i-radio"/></svg>Carte en direct</div>
+            <div class="mock-nav-item"><svg class="icon"><use href="#i-calendar-clock"/></svg>Courses</div>
+            <div class="mock-nav-item"><svg class="icon"><use href="#i-triangle-alert"/></svg>Incidents</div>
+          </div>
+          <div>
+            <div class="mock-nav-title">Flotte</div>
+            <div class="mock-nav-item"><svg class="icon"><use href="#i-bus"/></svg>Véhicules</div>
+            <div class="mock-nav-item"><svg class="icon"><use href="#i-users"/></svg>Conducteurs</div>
+            <div class="mock-nav-item"><svg class="icon"><use href="#i-route"/></svg>Trajets et arrêts</div>
+          </div>
+          <div>
+            <div class="mock-nav-title">Personnes</div>
+            <div class="mock-nav-item"><svg class="icon"><use href="#i-user-round"/></svg>Élèves</div>
+          </div>
+          <div>
+            <div class="mock-nav-title">Analyses</div>
+            <div class="mock-nav-item"><svg class="icon"><use href="#i-bar-chart-3"/></svg>Statistiques</div>
+          </div>
+        </nav>
+        <div class="mock-side-foot">v0.1.0 · Console école</div>
+      </aside>
+
+      <div class="mock-main">
+        <div class="mock-topbar">
+          <div>
+            <div class="mock-greeting">Bonjour, Amina</div>
+            <div class="mock-greeting-sub">3 bus sont en direct.</div>
+          </div>
+          <span class="mock-live-badge"><span class="pulse-dot"></span>Temps réel connecté</span>
+          <span class="mock-avatar">AB</span>
+        </div>
+
+        <div class="mock-stats">
+          <div class="card mock-stat">
+            <div class="mock-stat-top"><span class="mock-stat-label">Flotte en ligne</span><span class="mock-stat-icon green"><svg class="icon"><use href="#i-bus"/></svg></span></div>
+            <div class="mock-stat-value">3<small> / 4</small></div>
+            <div class="mock-stat-hint">Diffusion GPS en direct</div>
+          </div>
+          <div class="card mock-stat">
+            <div class="mock-stat-top"><span class="mock-stat-label">Courses actives</span><span class="mock-stat-icon"><svg class="icon"><use href="#i-calendar-clock"/></svg></span></div>
+            <div class="mock-stat-value">3</div>
+            <div class="mock-stat-hint">8 au total aujourd’hui</div>
+          </div>
+          <div class="card mock-stat">
+            <div class="mock-stat-top"><span class="mock-stat-label">Élèves</span><span class="mock-stat-icon"><svg class="icon"><use href="#i-user-round"/></svg></span></div>
+            <div class="mock-stat-value">246</div>
+            <div class="mock-stat-hint">12 trajets assignés</div>
+          </div>
+          <div class="card mock-stat">
+            <div class="mock-stat-top"><span class="mock-stat-label">Incidents ouverts</span><span class="mock-stat-icon green"><svg class="icon"><use href="#i-triangle-alert"/></svg></span></div>
+            <div class="mock-stat-value">0</div>
+            <div class="mock-stat-hint">tout va bien</div>
+          </div>
+        </div>
+
+        <div class="mock-body">
+          <div class="card mock-panel mock-map">
+            <div class="mock-panel-head">Carte en direct<span class="count">3 suivis</span></div>
+            <!-- Carte réelle : trajet R-004 « trajet bus 7 » (Tétouan), tracé routier
+                 OSRM sur fond CARTO Positron — comme dans la vraie console. -->
+            <svg class="mapbase" viewBox="0 0 720 400" aria-hidden="true">
+              <image href="assets/map-r004.png" width="720" height="400"/>
+              <!-- arrêts réels de R-004 : origine (vert), intermédiaires (teal), destination (rouge) -->
+              <g stroke="#ffffff" stroke-width="2">
+                <circle cx="396.2" cy="192.5" r="6" fill="oklch(0.5 0.12 155)"/>
+                <circle cx="361.2" cy="182" r="6" fill="#006a80"/>
+                <circle cx="309.2" cy="165" r="6" fill="#006a80"/>
+                <circle cx="261.3" cy="170.5" r="6" fill="#006a80"/>
+                <circle cx="190.7" cy="188.5" r="6" fill="#006a80"/>
+                <circle cx="158.2" cy="235.5" r="6" fill="#006a80"/>
+                <circle cx="278.3" cy="268.5" r="6" fill="#006a80"/>
+                <circle cx="425.7" cy="318.5" r="6" fill="#006a80"/>
+                <circle cx="535.8" cy="251" r="6" fill="#006a80"/>
+                <circle cx="561.8" cy="137.5" r="6" fill="#006a80"/>
+                <circle cx="544.3" cy="81.5" r="6" fill="oklch(0.53 0.19 27)"/>
+              </g>
+              <!-- bus statique en ligne, sur le circuit -->
+              <g class="bus-marker" transform="translate(520.1, 244.2)" style="color:#fff">
+                <circle class="veh-ping" r="13" fill="#006a80"/>
+                <circle r="11" fill="#006a80" stroke="#fff" stroke-width="2.5"/>
+                <use href="#i-bus-front" x="-6" y="-6" width="12" height="12"/>
+              </g>
+              <!-- bus en service : glisse le long du tracé routier réel -->
+              <g class="bus-glide" style="color:#fff">
+                <circle class="veh-ping" r="13" fill="#006a80"/>
+                <circle r="11" fill="#006a80" stroke="#fff" stroke-width="2.5"/>
+                <use href="#i-bus-front" x="-6" y="-6" width="12" height="12"/>
+              </g>
+              <!-- bus d'un autre circuit, plus discret -->
+              <g class="bus-marker" transform="translate(96, 96)" style="color:#fff">
+                <circle r="11" fill="#006a80" stroke="#fff" stroke-width="2.5"/>
+                <use href="#i-bus-front" x="-6" y="-6" width="12" height="12"/>
+              </g>
+            </svg>
+            <span class="map-note">Données de démonstration</span>
+            <span class="map-attr">© OpenStreetMap · © CARTO</span>
+          </div>
+
+          <div class="card mock-panel">
+            <div class="mock-panel-head">Véhicules actifs<span class="count">3 suivis</span></div>
+            <div class="mock-veh-list">
+              <div class="mock-veh-row">
+                <span class="mock-veh-chip"><svg class="icon"><use href="#i-bus-front"/></svg></span>
+                <div><div class="mock-veh-code">BUS-01</div><div class="mock-veh-route">Trajet bus 7 · R-004</div></div>
+                <span class="badge badge-online"><span class="pulse-dot" style="width:6px;height:6px"></span>En ligne</span>
+              </div>
+              <div class="mock-veh-row">
+                <span class="mock-veh-chip"><svg class="icon"><use href="#i-bus-front"/></svg></span>
+                <div><div class="mock-veh-code">BUS-02</div><div class="mock-veh-route">Circuit Hay Riad · Matin</div></div>
+                <span class="badge badge-online"><span class="pulse-dot" style="width:6px;height:6px"></span>En ligne</span>
+              </div>
+              <div class="mock-veh-row">
+                <span class="mock-veh-chip"><svg class="icon"><use href="#i-bus-front"/></svg></span>
+                <div><div class="mock-veh-code">BUS-03</div><div class="mock-veh-route">Circuit Bab El Had · Matin</div></div>
+                <span class="badge badge-online"><span class="pulse-dot" style="width:6px;height:6px"></span>En ligne</span>
+              </div>
+              <div class="mock-veh-row">
+                <span class="mock-veh-chip off"><svg class="icon"><use href="#i-bus-front"/></svg></span>
+                <div><div class="mock-veh-code">BUS-04</div><div class="mock-veh-route">vu il y a 2 h</div></div>
+                <span class="badge badge-offline"><span class="dot dot-hollow"></span>Hors ligne</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="mock-caption">Aperçu de la console école (données de démonstration).</p>
+  </div>
+</section>
+
+<!-- ============================ fonctionnement ============================ -->
+<section class="section band" id="fonctionnement">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="section-kicker">Fonctionnement</div>
+      <h2>Aucun boîtier GPS. Un simple scan au départ.</h2>
+      <p class="section-sub">
+        Le téléphone du conducteur devient le GPS du bus. Tout le reste (la carte,
+        les retards, les notifications) suit tout seul.
+      </p>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <span class="step-chip"><svg class="icon"><use href="#i-qr-code"/></svg>Confirmé par scan QR au début du service</span>
+        <h3>Le conducteur scanne le QR du bus</h3>
+        <p>
+          Chaque bus porte un code QR sécurisé. Au début du service, le conducteur
+          le scanne dans son application&nbsp;: la course démarre et son téléphone
+          diffuse la position du bus.
+        </p>
+      </div>
+      <div class="step reveal">
+        <span class="step-chip"><span class="pulse-dot"></span>Temps réel connecté</span>
+        <h3>L’école voit toute sa flotte</h3>
+        <p>
+          Sur la console école, chaque bus en service apparaît sur la carte en
+          direct&nbsp;: positions, retards, incidents et embarquements, en temps réel.
+        </p>
+      </div>
+      <div class="step reveal">
+        <span class="step-chip"><svg class="icon green"><use href="#i-check"/></svg>Votre élève est monté dans le bus</span>
+        <h3>Les parents voient le bus arriver</h3>
+        <p>
+          Chaque parent suit le bus de son enfant jusqu’à l’arrêt de ramassage,
+          avec l’heure d’arrivée estimée et la confirmation d’embarquement.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================ parents =============================== -->
+<section class="section" id="parents">
+  <div class="container split">
+    <div class="reveal">
+      <div class="section-kicker">L’application parents</div>
+      <h2>
+        «&nbsp;Le bus de mon enfant&nbsp;», l’écran qui remplace l’attente au portail.
+      </h2>
+      <div class="feature-list">
+        <div class="feature-item">
+          <span class="feature-icon"><svg class="icon"><use href="#i-clock"/></svg></span>
+          <div>
+            <h3>Arrivée vers 07:42</h3>
+            <p>L’heure d’arrivée estimée, actualisée en continu tant que le bus roule. Plus besoin d’appeler l’école pour savoir où il est.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon"><svg class="icon"><use href="#i-user-check"/></svg></span>
+          <div>
+            <h3>«&nbsp;Votre élève est monté dans le bus&nbsp;»</h3>
+            <p>Le conducteur pointe chaque embarquement dans son application&nbsp;; le parent en est informé aussitôt, à la montée comme à la descente.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon"><svg class="icon"><use href="#i-triangle-alert"/></svg></span>
+          <div>
+            <h3>Les retards, annoncés honnêtement</h3>
+            <p>«&nbsp;Environ 5 min de retard&nbsp;»&nbsp;: l’application affiche l’état réel de la course et la fraîcheur des données, jamais une position périmée.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon"><svg class="icon"><use href="#i-bell"/></svg></span>
+          <div>
+            <h3>Signaler un problème</h3>
+            <p>Un canal direct vers l’école&nbsp;: chaque signalement arrive dans la console, est pris en compte, puis résolu, avec traçabilité.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Maquette : application parents (écran d’accueil réel du mobile) -->
+    <div class="phone-wrap reveal">
+      <div class="phone" role="img" aria-label="Aperçu de l’application parents : bus en direct, arrivée estimée à 7 h 42 dans 8 minutes, arrêt de ramassage Bab El Had, destination Académie Greenwood, et confirmation que l’élève est monté dans le bus.">
+        <div class="phone-screen">
+          <div class="phone-status">
+            <span>09:41</span>
+            <span class="icons">
+              <svg class="icon" style="width:14px;height:14px"><use href="#i-wifi"/></svg>
+              <svg width="20" height="11" viewBox="0 0 20 11" aria-hidden="true"><rect x="0.5" y="0.5" width="16" height="10" rx="2.5" fill="none" stroke="currentColor" opacity="0.5"/><rect x="2" y="2" width="11" height="7" rx="1.5" fill="currentColor"/><path d="M18.5 3.5v4a2 2 0 0 0 0-4Z" fill="currentColor" opacity="0.5"/></svg>
+            </span>
+          </div>
+          <div class="phone-body">
+            <div>
+              <div class="phone-title">Le bus de mon enfant</div>
+              <div class="phone-title-sub">Circuit Agdal · Matin</div>
+            </div>
+            <div class="card phone-card">
+              <div class="live-row">
+                <span class="live-beacon"></span>
+                <span class="live-label">EN DIRECT</span>
+              </div>
+              <div class="eta-row">
+                <div>
+                  <div class="eta-label">Arrivée vers</div>
+                  <div class="eta-time">07:42</div>
+                </div>
+                <span class="eta-pill">8 min</span>
+              </div>
+              <div class="phone-hr"></div>
+              <div class="routeline">
+                <div class="routeline-rail"><span class="o"></span><span class="l"></span><span class="d"></span></div>
+                <div class="routeline-stops">
+                  <div><div class="lab">Arrêt de ramassage</div><div class="val">Bab El Had</div></div>
+                  <div><div class="lab">Destination</div><div class="val">Académie Greenwood</div></div>
+                </div>
+              </div>
+              <div class="phone-btn"><svg class="icon"><use href="#i-navigation"/></svg>Suivre le bus</div>
+            </div>
+            <div class="card phone-card" style="gap:9px">
+              <div class="attendance-label">PRÉSENCE DE L’ÉLÈVE</div>
+              <div class="attendance-row">
+                <span class="attendance-check"><svg class="icon"><use href="#i-check"/></svg></span>
+                <div>
+                  <p>Votre élève est monté dans le bus</p>
+                  <div class="ago">Confirmé par le conducteur · il y a 2 min</div>
+                </div>
+              </div>
+            </div>
+            <div class="phone-btn ghost"><svg class="icon"><use href="#i-triangle-alert"/></svg>Signaler un problème</div>
+          </div>
+          <div class="phone-tabbar">
+            <div class="phone-tab active"><svg class="icon"><use href="#i-bus-front"/></svg>Bus</div>
+            <div class="phone-tab"><svg class="icon"><use href="#i-bell"/></svg>Notifications</div>
+            <div class="phone-tab"><svg class="icon"><use href="#i-user-round"/></svg>Profil</div>
+          </div>
+          <div class="phone-home"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================ console =============================== -->
+<section class="section band" id="console">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="section-kicker">La console école</div>
+      <h2>Toute votre flotte scolaire, sur un seul écran.</h2>
+      <p class="section-sub">
+        Bus, conducteurs, circuits, élèves et incidents&nbsp;: l’état opérationnel de
+        votre transport, pensé pour être lisible sans formation.
+      </p>
+    </div>
+
+    <div class="bento">
+      <div class="card tile tile-7 reveal">
+        <h3><svg class="icon"><use href="#i-calendar-clock"/></svg>Courses</h3>
+        <p>
+          Planifiez une course une fois&nbsp;; la série se répète chaque jour ouvré et se
+          modifie en une seule action. Chaque course garde son bus, son conducteur
+          et son statut en direct.
+        </p>
+        <span class="recur-chip"><svg class="icon"><use href="#i-calendar-clock"/></svg>Récurrente · Jours ouvrés (lun–ven)</span>
+        <div class="tile-visual">
+          <table class="mini-table">
+            <thead><tr><th>Trajet</th><th>Véhicule</th><th>Conducteur</th><th>Statut</th><th>Retard</th></tr></thead>
+            <tbody>
+              <tr>
+                <td class="strong">Circuit Agdal · Matin</td><td>BUS-01</td><td>K. Benali</td>
+                <td><span class="badge badge-active"><span class="dot"></span>Active</span></td><td class="muted">À l’heure</td>
+              </tr>
+              <tr>
+                <td class="strong">Circuit Hay Riad · Matin</td><td>BUS-02</td><td>S. Amrani</td>
+                <td><span class="badge badge-active"><span class="dot"></span>Active</span></td><td class="amber">+4 min</td>
+              </tr>
+              <tr>
+                <td class="strong">Circuit Centre · Soir</td><td>BUS-03</td><td class="muted">Non assigné</td>
+                <td><span class="badge badge-planned"><span class="dot"></span>Prévue</span></td><td class="muted">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card tile tile-5 reveal">
+        <h3><svg class="icon"><use href="#i-route"/></svg>Trajets et arrêts</h3>
+        <p>
+          Tracez chaque circuit en plaçant ses arrêts directement sur la carte&nbsp;:
+          le premier est l’origine, le dernier la destination.
+        </p>
+        <div class="tile-visual editor-visual">
+          <!-- capture réelle de l'éditeur « Trajets et arrêts » : R-004 et ses 11 arrêts -->
+          <img src="assets/routes-editor.webp" width="1400" height="826"
+            alt="Éditeur de trajets de la console : le circuit R-004 et ses 11 arrêts numérotés tracés sur la carte de Tétouan." />
+          <span class="editor-hint">Cliquez sur la carte pour ajouter un arrêt</span>
+          <span class="map-attr">© OpenStreetMap · © CARTO</span>
+        </div>
+      </div>
+
+      <div class="card tile tile-5 reveal">
+        <h3><svg class="icon"><use href="#i-qr-code"/></svg>Véhicules et QR sécurisé</h3>
+        <p>
+          Un jeton sécurisé par bus, affiché une seule fois à la création.
+          Régénérez-le à tout moment&nbsp;: l’ancien code cesse immédiatement de fonctionner.
+        </p>
+        <div class="tile-visual qr-visual">
+          <!-- QR réel (version 2, correction M) : encode https://transtra.net -->
+          <div class="qr-code-box" aria-hidden="true">
+            <svg viewBox="0 0 25 25" shape-rendering="crispEdges" fill="#1c2735">
+              <path d="M0 0h7v1h-7zM8 0h1v1h-1zM11 0h1v1h-1zM13 0h1v1h-1zM16 0h1v1h-1zM18 0h7v1h-7zM0 1h1v1h-1zM6 1h1v1h-1zM8 1h3v1h-3zM13 1h1v1h-1zM18 1h1v1h-1zM24 1h1v1h-1zM0 2h1v1h-1zM2 2h3v1h-3zM6 2h1v1h-1zM10 2h4v1h-4zM15 2h1v1h-1zM18 2h1v1h-1zM20 2h3v1h-3zM24 2h1v1h-1zM0 3h1v1h-1zM2 3h3v1h-3zM6 3h1v1h-1zM8 3h2v1h-2zM11 3h4v1h-4zM18 3h1v1h-1zM20 3h3v1h-3zM24 3h1v1h-1zM0 4h1v1h-1zM2 4h3v1h-3zM6 4h1v1h-1zM9 4h1v1h-1zM11 4h2v1h-2zM14 4h2v1h-2zM18 4h1v1h-1zM20 4h3v1h-3zM24 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM10 5h5v1h-5zM18 5h1v1h-1zM24 5h1v1h-1zM0 6h7v1h-7zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM16 6h1v1h-1zM18 6h7v1h-7zM8 7h1v1h-1zM11 7h1v1h-1zM0 8h1v1h-1zM2 8h2v1h-2zM5 8h3v1h-3zM9 8h1v1h-1zM11 8h2v1h-2zM14 8h1v1h-1zM16 8h1v1h-1zM18 8h1v1h-1zM21 8h1v1h-1zM23 8h2v1h-2zM2 9h1v1h-1zM5 9h1v1h-1zM9 9h2v1h-2zM12 9h1v1h-1zM14 9h1v1h-1zM16 9h2v1h-2zM19 9h1v1h-1zM23 9h1v1h-1zM1 10h7v1h-7zM9 10h1v1h-1zM11 10h2v1h-2zM17 10h1v1h-1zM20 10h1v1h-1zM8 11h3v1h-3zM12 11h2v1h-2zM15 11h2v1h-2zM18 11h1v1h-1zM21 11h2v1h-2zM0 12h1v1h-1zM3 12h1v1h-1zM5 12h2v1h-2zM8 12h1v1h-1zM10 12h1v1h-1zM15 12h6v1h-6zM22 12h3v1h-3zM1 13h3v1h-3zM5 13h1v1h-1zM7 13h1v1h-1zM9 13h1v1h-1zM11 13h1v1h-1zM13 13h8v1h-8zM24 13h1v1h-1zM1 14h2v1h-2zM6 14h2v1h-2zM9 14h2v1h-2zM12 14h1v1h-1zM14 14h1v1h-1zM16 14h1v1h-1zM20 14h1v1h-1zM22 14h2v1h-2zM0 15h1v1h-1zM3 15h2v1h-2zM9 15h2v1h-2zM12 15h2v1h-2zM15 15h6v1h-6zM24 15h1v1h-1zM3 16h1v1h-1zM5 16h4v1h-4zM10 16h2v1h-2zM16 16h9v1h-9zM8 17h1v1h-1zM10 17h1v1h-1zM12 17h2v1h-2zM15 17h2v1h-2zM20 17h1v1h-1zM22 17h1v1h-1zM24 17h1v1h-1zM0 18h7v1h-7zM8 18h5v1h-5zM16 18h1v1h-1zM18 18h1v1h-1zM20 18h1v1h-1zM22 18h3v1h-3zM0 19h1v1h-1zM6 19h1v1h-1zM8 19h1v1h-1zM10 19h1v1h-1zM12 19h1v1h-1zM15 19h2v1h-2zM20 19h1v1h-1zM23 19h1v1h-1zM0 20h1v1h-1zM2 20h3v1h-3zM6 20h1v1h-1zM9 20h1v1h-1zM11 20h3v1h-3zM16 20h6v1h-6zM23 20h1v1h-1zM0 21h1v1h-1zM2 21h3v1h-3zM6 21h1v1h-1zM8 21h3v1h-3zM12 21h3v1h-3zM16 21h3v1h-3zM20 21h5v1h-5zM0 22h1v1h-1zM2 22h3v1h-3zM6 22h1v1h-1zM8 22h1v1h-1zM11 22h3v1h-3zM17 22h2v1h-2zM20 22h1v1h-1zM22 22h2v1h-2zM0 23h1v1h-1zM6 23h1v1h-1zM15 23h1v1h-1zM17 23h2v1h-2zM20 23h1v1h-1zM22 23h1v1h-1zM0 24h7v1h-7zM8 24h3v1h-3zM12 24h1v1h-1zM14 24h1v1h-1zM19 24h6v1h-6z"/>
+            </svg>
+          </div>
+          <div class="qr-meta">
+            <div class="code">QR — BUS-01</div>
+            <div class="sub">Immatriculation 12345-A-7 · QR v3</div>
+            <span class="btn btn-ghost" aria-hidden="true">Régénérer le QR</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card tile tile-7 reveal">
+        <h3><svg class="icon"><use href="#i-user-round"/></svg>Élèves</h3>
+        <p>
+          Élèves, leurs contacts parents et affectations de trajet. Chaque élève est
+          rattaché à son circuit et à son arrêt&nbsp;; sa présence, pointée par le
+          conducteur, remonte à l’école comme aux parents.
+        </p>
+        <div class="tile-visual roster">
+          <div class="roster-row">
+            <span class="roster-avatar">YA</span>
+            <div><div class="roster-name">Yasmine Alami</div><div class="roster-stop">Circuit Agdal · Arrêt Bab El Had</div></div>
+            <span class="badge badge-active"><span class="dot"></span>À bord</span>
+          </div>
+          <div class="roster-row">
+            <span class="roster-avatar">OF</span>
+            <div><div class="roster-name">Omar El Fassi</div><div class="roster-stop">Circuit Agdal · Arrêt Agdal</div></div>
+            <span class="badge badge-active"><span class="dot"></span>À bord</span>
+          </div>
+          <div class="roster-row">
+            <span class="roster-avatar">LM</span>
+            <div><div class="roster-name">Lina Mansouri</div><div class="roster-stop">Circuit Hay Riad · Arrêt Hay Riad</div></div>
+            <span class="badge badge-absent"><span class="dot"></span>Absent</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============================== sécurité =============================== -->
+<section class="section" id="securite">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="section-kicker">Sécurité et confiance</div>
+      <h2>Conçu pour des données d’enfants. Donc conçu strict.</h2>
+    </div>
+    <div class="trust-grid">
+      <div class="trust-item reveal">
+        <h3><svg class="icon"><use href="#i-shield-check"/></svg>Des rôles étanches</h3>
+        <p>École, conducteurs et parents ne voient chacun que ce qui les concerne. Un parent ne suit que le bus de son propre enfant, jamais celui des autres.</p>
+      </div>
+      <div class="trust-item reveal">
+        <h3><svg class="icon"><use href="#i-qr-code"/></svg>QR à jeton unique</h3>
+        <p>Le code QR de chaque bus porte un jeton secret, affiché une seule fois et révocable à tout moment. Impossible d’usurper un véhicule.</p>
+      </div>
+      <div class="trust-item reveal">
+        <h3><svg class="icon"><use href="#i-eye"/></svg>Des données honnêtes</h3>
+        <p>L’état de la connexion et la fraîcheur de chaque position sont toujours affichés. Une donnée périmée n’est jamais présentée comme en direct.</p>
+      </div>
+      <div class="trust-item reveal">
+        <h3><svg class="icon"><use href="#i-languages"/></svg>Accessible et bilingue</h3>
+        <p>Console et applications respectent le contraste WCAG AA, honorent la réduction des animations et existent en français comme en anglais.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============================== CTA final ============================== -->
+<section class="section" id="demo" style="padding-top:0;padding-bottom:0">
+  <div class="container">
+    <div class="cta-panel reveal">
+      <svg class="wordmark" role="img" aria-label="Transco" style="--wm-accent:#fff"><use href="#w-transco"/></svg>
+      <h2>Prêt à mettre vos bus en direct&nbsp;?</h2>
+      <p>
+        Écrivez-nous&nbsp;: nous mettons votre école en ligne avec ses circuits, ses
+        conducteurs et ses parents en quelques jours.
+      </p>
+      <a class="btn" href="mailto:contact@transtra.app?subject=D%C3%A9mo%20Transco">Demander une démo<svg class="icon"><use href="#i-arrow-right"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= bande film : sur la route ======================
+     Le panneau CTA ci-dessus déborde sur la vidéo (chevauchement en z). -->
+<section class="film" aria-label="Sur la route, chaque matin">
+  <video class="film-video" autoplay muted loop playsinline preload="metadata"
+    poster="assets/bus-ecole-poster.jpg" aria-hidden="true">
+    <source src="assets/bus-ecole.mp4" type="video/mp4" />
+  </video>
+  <div class="film-shade" aria-hidden="true"></div>
+  <div class="container film-content">
+    <h2>Sur la route, chaque matin.</h2>
+    <p>Chaque course est suivie de bout en bout, du premier arrêt jusqu’à l’école.</p>
+  </div>
+  <!-- le pied de page vit sur la vidéo -->
+  <footer class="film-footer">
+    <div class="container">
+      <div class="footer-brand">
+        <svg class="wordmark" role="img" aria-label="Transco" style="--wm-accent:#fff"><use href="#w-transco"/></svg>
+        <span>Le volet scolaire de la plateforme Transtra.</span>
+      </div>
+      <div class="footer-meta">© 2026 Transtra · Vidéo&nbsp;: Pexels</div>
+    </div>
+  </footer>
+</section>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
