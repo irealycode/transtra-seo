@@ -206,6 +206,44 @@ html.js-anim .trust-grid .reveal.in:nth-child(4) { transition-delay: 210ms; }
   .hero-mock { animation-delay: 180ms; animation-duration: 0.7s; }
 }
 
+/* ---------------------------- splash d'intro ----------------------------
+   Rideau teal plein écran : le logotype se révèle d'un balayage (l'accent or
+   en tête), le rideau se lève, la cascade du héros prend le relais.
+   html.splash-on est posé avant le premier rendu (script inline du <head>),
+   une fois par session et jamais sous mouvement réduit. Sans JS : rien. */
+.splash { display: none; }
+html.splash-on .splash {
+  position: fixed;
+  inset: 0;
+  z-index: 200; /* au-dessus du header sticky (100) */
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, oklch(0.42 0.085 220), oklch(0.3 0.06 230));
+  animation: splash-lift 0.6s cubic-bezier(0.7, 0, 0.16, 1) 1.5s forwards;
+}
+html.splash-on .splash .wordmark {
+  height: clamp(30px, 6vw, 46px);
+  width: auto;
+  color: #fff;
+  --wm-accent: var(--gold);
+  clip-path: inset(-8% 102% -8% -2%);
+  transform: scale(1.03);
+  animation:
+    splash-wipe 0.9s var(--ease-out) 0.2s forwards,
+    splash-settle 1.1s var(--ease-out) 0.2s forwards;
+}
+@keyframes splash-wipe { to { clip-path: inset(-8% -2% -8% -2%); } }
+@keyframes splash-settle { to { transform: scale(1); } }
+@keyframes splash-lift { to { transform: translateY(-101%); visibility: hidden; } }
+/* Le héros attend la levée du rideau avant sa cascade. */
+@media (prefers-reduced-motion: no-preference) {
+  html.splash-on .hero-kicker { animation-delay: 1.6s; }
+  html.splash-on .hero h1 { animation-delay: 1.68s; }
+  html.splash-on .hero-ctas { animation-delay: 1.76s; }
+  html.splash-on .hero-note { animation-delay: 1.84s; }
+  html.splash-on .hero-mock { animation-delay: 1.78s; }
+}
+
 /* =============================== header ================================= */
 .site-header {
   position: sticky;
@@ -917,6 +955,210 @@ html.js-anim .trust-grid .reveal.in:nth-child(4) { transition-delay: 210ms; }
 }
 .cta-panel .btn { margin-top: 2rem; background: #fff; color: var(--accent); }
 .cta-panel .btn:hover { background: oklch(0.95 0.01 210); }
+
+/* --------------------------- formulaire de démo -------------------------
+   Étapes à réponses prêtes : on clique, le bus avance d'un arrêt, la saisie
+   n'arrive qu'à la fin. Carte claire posée sur le panneau teal. */
+.demo-form {
+  max-width: 560px;
+  margin: 2.2rem auto 0;
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  background: var(--panel);
+  color: var(--text);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-lg);
+  text-align: left;
+}
+
+/* la ligne de trajet : 4 arrêts, un bus qui avance */
+.df-route {
+  position: relative;
+  height: 28px;
+  margin: 0.25rem 6px 0.6rem;
+}
+.df-track {
+  position: absolute;
+  inset: 50% 0 auto 0;
+  height: 3px;
+  transform: translateY(-50%);
+  border-radius: 999px;
+  background: var(--panel-3);
+  overflow: hidden;
+}
+.df-trail {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transform: scaleX(var(--df-p, 0));
+  transform-origin: left;
+  transition: transform 0.55s var(--ease-out);
+}
+.df-stop {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--i) / 3 * 100%);
+  width: 9px;
+  height: 9px;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  background: var(--panel);
+  border: 2px solid var(--border-strong);
+  transition: border-color 0.3s var(--ease-out), background 0.3s var(--ease-out);
+}
+.df-stop.done { border-color: var(--accent); background: var(--accent-soft); }
+.df-bus {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--df-p, 0) * 100%);
+  transform: translate(-50%, -50%);
+  transition: left 0.55s var(--ease-out);
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  box-shadow: var(--shadow-sm);
+}
+.df-bus .icon { width: 14px; height: 14px; }
+
+/* neutralise l'héritage de .cta-panel p (couleur claire, marges centrées) */
+.cta-panel .demo-form p { margin: 0; max-width: none; color: var(--text); font-size: inherit; }
+.demo-form .df-count { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.9rem; }
+
+/* pile d'étapes : une seule cellule de grille, entrées/sorties latérales */
+.df-steps { display: grid; }
+.df-step {
+  grid-area: 1 / 1;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+  opacity: 0;
+  transform: translateX(26px);
+  visibility: hidden;
+  transition:
+    opacity 0.32s var(--ease-out),
+    transform 0.32s var(--ease-out),
+    visibility 0s linear 0.32s;
+}
+.df-step.is-exit-back { transform: translateX(26px); }
+.df-step.is-exit-fwd, .df-step.is-enter-back { transform: translateX(-26px); }
+.df-step.is-current {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+  transition:
+    opacity 0.38s var(--ease-out) 0.12s,
+    transform 0.38s var(--ease-out) 0.12s,
+    visibility 0s;
+}
+.df-q {
+  display: block;
+  font-size: 1.05rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.9rem;
+  padding: 0;
+}
+.df-hint { font-weight: 450; font-size: 0.8rem; color: var(--text-muted); white-space: nowrap; }
+
+.df-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+.df-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.8rem 0.9rem;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 550;
+  text-align: left;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+.df-chip .icon { width: 17px; height: 17px; color: var(--accent); flex-shrink: 0; }
+.df-chip:hover { border-color: var(--border-strong); background: var(--panel-2); }
+.df-chip:active { transform: scale(0.98); }
+.df-chip.selected, .df-chip[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.df-fields { display: grid; gap: 0.9rem; }
+.df-field span {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+.df-field input {
+  width: 100%;
+  padding: 0.7rem 0.85rem;
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  transition: border-color var(--dur-fast) var(--ease-out);
+}
+.df-field input::placeholder { color: var(--text-faint); }
+.df-field input:focus { outline: none; border-color: var(--accent); }
+.df-field input[aria-invalid="true"] { border-color: var(--red); }
+.demo-form .df-note { font-size: 0.82rem; color: var(--text-muted); margin-top: 0.9rem; text-wrap: pretty; }
+
+/* état final */
+.df-done { text-align: center; padding-block: 0.8rem; }
+.df-done-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin: 0 auto 0.8rem;
+  border-radius: 999px;
+  background: var(--green-soft);
+  color: var(--green);
+}
+.df-done-icon .icon { width: 22px; height: 22px; }
+.df-done .df-note { margin-top: 0.4rem; }
+
+.demo-form .df-error { margin: 0.8rem 0 0; font-size: 0.85rem; color: var(--red); }
+.df-error a { text-decoration: underline; }
+
+.df-nav { display: flex; justify-content: space-between; gap: 0.75rem; margin-top: 1.1rem; }
+/* [hidden] doit gagner sur display:inline-flex de .btn */
+.demo-form [hidden] { display: none !important; }
+.cta-panel .demo-form .btn { margin-top: 0; }
+.demo-form .df-next {
+  margin-left: auto;
+  background: var(--accent);
+  color: #fff;
+}
+.demo-form .df-next:hover { background: var(--accent-hover); }
+.demo-form .df-next[disabled] { opacity: 0.6; cursor: default; }
+.demo-form .df-back {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+.demo-form .df-back:hover { background: var(--panel-2); color: var(--text); }
+
+/* pot de miel anti-spam : hors écran, jamais focusable */
+.df-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+
+@media (max-width: 520px) {
+  .df-choices { grid-template-columns: 1fr; }
+  .df-nav { flex-direction: row; }
+}
 
 /* --------------------------- bande film (fin) ---------------------------
    Boucle d'ambiance : la route vue du poste de conduite d'un bus marocain.

@@ -7,6 +7,19 @@
 <meta name="description" content="Transco met les bus de votre école en direct : les parents suivent le bus de leur enfant, l’école voit toute sa flotte, et chaque embarquement est confirmé." />
 <link rel="icon" type="image/svg+xml" href="assets/icon_school.svg" />
 <link rel="preload" href="assets/fonts/figtree-latin.woff2" as="font" type="font/woff2" crossorigin />
+<script>
+/* Splash d'introduction : une fois par session, jamais sous mouvement réduit.
+   Décidé avant le premier rendu pour éviter tout flash. */
+(function () {
+  try {
+    if (!sessionStorage.getItem("transcoSplash") &&
+        !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      document.documentElement.classList.add("splash-on");
+      sessionStorage.setItem("transcoSplash", "1");
+    }
+  } catch (e) {}
+})();
+</script>
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -46,6 +59,13 @@
     </symbol>
   </defs>
 </svg>
+
+<!-- ============================ splash d'intro ============================
+     Rideau teal : le logotype se révèle, puis le rideau se lève sur le héros.
+     Affiché une fois par session (voir le script inline du <head>). -->
+<div class="splash" aria-hidden="true">
+  <svg class="wordmark"><use href="#w-transco"/></svg>
+</div>
 
 <!-- ================================ header ================================ -->
 <header class="site-header" id="top">
@@ -511,10 +531,95 @@
       <svg class="wordmark" role="img" aria-label="Transco" style="--wm-accent:#fff"><use href="#w-transco"/></svg>
       <h2>Prêt à mettre vos bus en direct&nbsp;?</h2>
       <p>
-        Écrivez-nous&nbsp;: nous mettons votre école en ligne avec ses circuits, ses
-        conducteurs et ses parents en quelques jours.
+        Trois réponses à choisir, vos coordonnées, et nous mettons votre école
+        en ligne en quelques jours.
       </p>
-      <a class="btn" href="mailto:contact@transtra.app?subject=D%C3%A9mo%20Transco">Demander une démo<svg class="icon"><use href="#i-arrow-right"/></svg></a>
+
+      <!-- Formulaire de démo en étapes : réponses prêtes à cliquer, la saisie
+           n'arrive qu'à la fin. Le bus avance d'un arrêt par étape. -->
+      <form class="demo-form" id="demo-form" novalidate
+            action="https://formspree.io/f/xjgnrbov" method="POST">
+        <div class="df-route" aria-hidden="true">
+          <div class="df-track"><div class="df-trail"></div></div>
+          <span class="df-stop done" style="--i:0"></span>
+          <span class="df-stop" style="--i:1"></span>
+          <span class="df-stop" style="--i:2"></span>
+          <span class="df-stop" style="--i:3"></span>
+          <span class="df-bus"><svg class="icon"><use href="#i-bus-front"/></svg></span>
+        </div>
+        <p class="df-count">Étape <span id="df-count-cur">1</span> sur 4</p>
+
+        <div class="df-steps" id="df-steps">
+          <fieldset class="df-step is-current" data-step="0">
+            <legend class="df-q">Vous êtes…</legend>
+            <div class="df-choices">
+              <button type="button" class="df-chip" data-field="role" data-value="Directeur·rice / direction d’école">
+                <svg class="icon"><use href="#i-user-round"/></svg>Direction d’école</button>
+              <button type="button" class="df-chip" data-field="role" data-value="Gestionnaire du transport scolaire">
+                <svg class="icon"><use href="#i-route"/></svg>Gestion du transport</button>
+              <button type="button" class="df-chip" data-field="role" data-value="Transporteur privé">
+                <svg class="icon"><use href="#i-bus"/></svg>Transporteur privé</button>
+              <button type="button" class="df-chip" data-field="role" data-value="Parent d’élève">
+                <svg class="icon"><use href="#i-users"/></svg>Parent d’élève</button>
+            </div>
+          </fieldset>
+
+          <fieldset class="df-step" data-step="1" inert>
+            <legend class="df-q">Combien de bus roulent pour vous&nbsp;?</legend>
+            <div class="df-choices">
+              <button type="button" class="df-chip" data-field="flotte" data-value="1 à 2 bus">1 à 2 bus</button>
+              <button type="button" class="df-chip" data-field="flotte" data-value="3 à 5 bus">3 à 5 bus</button>
+              <button type="button" class="df-chip" data-field="flotte" data-value="6 à 15 bus">6 à 15 bus</button>
+              <button type="button" class="df-chip" data-field="flotte" data-value="Plus de 15 bus">Plus de 15 bus</button>
+            </div>
+          </fieldset>
+
+          <fieldset class="df-step" data-step="2" inert>
+            <legend class="df-q">Qu’est-ce qui compte le plus pour vous&nbsp;? <span class="df-hint">Plusieurs choix possibles</span></legend>
+            <div class="df-choices">
+              <button type="button" class="df-chip df-multi" data-field="priorites" data-value="Les parents suivent le bus en direct" aria-pressed="false">
+                <svg class="icon"><use href="#i-radio"/></svg>Les parents suivent le bus</button>
+              <button type="button" class="df-chip df-multi" data-field="priorites" data-value="La console de suivi pour l’école" aria-pressed="false">
+                <svg class="icon"><use href="#i-layout-dashboard"/></svg>La console pour l’école</button>
+              <button type="button" class="df-chip df-multi" data-field="priorites" data-value="Le pointage des élèves à bord" aria-pressed="false">
+                <svg class="icon"><use href="#i-user-check"/></svg>Le pointage des élèves</button>
+              <button type="button" class="df-chip df-multi" data-field="priorites" data-value="La sécurité des accès (QR, jetons)" aria-pressed="false">
+                <svg class="icon"><use href="#i-shield-check"/></svg>QR et sécurité des accès</button>
+            </div>
+          </fieldset>
+
+          <fieldset class="df-step" data-step="3" inert>
+            <legend class="df-q">Où vous joindre&nbsp;?</legend>
+            <div class="df-fields">
+              <label class="df-field">
+                <span>École ou organisation</span>
+                <input type="text" name="ecole" autocomplete="organization" placeholder="Académie Greenwood" />
+              </label>
+              <label class="df-field">
+                <span>Email ou WhatsApp</span>
+                <input type="text" name="contact" autocomplete="email" inputmode="email" placeholder="direction@ecole.ma ou 06 12 34 56 78" />
+              </label>
+            </div>
+            <p class="df-note">Nous revenons vers vous sous 24&nbsp;h ouvrées. Pas de spam, pas d’engagement.</p>
+          </fieldset>
+
+          <div class="df-step df-done" data-step="4" inert>
+            <span class="df-done-icon"><svg class="icon"><use href="#i-check"/></svg></span>
+            <p class="df-q">Demande envoyée. À très vite&nbsp;!</p>
+            <p class="df-note">Nous préparons une démo avec vos circuits en tête et revenons vers vous sous 24&nbsp;h ouvrées.</p>
+          </div>
+        </div>
+
+        <p class="df-error" role="alert" hidden></p>
+
+        <div class="df-nav">
+          <button type="button" class="btn df-back" id="df-back" hidden>Retour</button>
+          <button type="button" class="btn df-next" id="df-next" hidden>Continuer<svg class="icon"><use href="#i-arrow-right"/></svg></button>
+          <button type="submit" class="btn df-next" id="df-send" hidden>Envoyer la demande<svg class="icon"><use href="#i-arrow-right"/></svg></button>
+        </div>
+
+        <input type="checkbox" name="botcheck" class="df-hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+      </form>
     </div>
   </div>
 </section>
