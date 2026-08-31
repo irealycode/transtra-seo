@@ -53,6 +53,14 @@
     <symbol id="i-move-horizontal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 8 4 4-4 4"/><path d="M2 12h20"/><path d="m6 8-4 4 4 4"/></symbol>
     <symbol id="i-school" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 22v-4a2 2 0 1 0-4 0v4"/><path d="m18 10 3.447 1.724a1 1 0 0 1 .553.894V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-7.382a1 1 0 0 1 .553-.894L6 10"/><path d="M18 5v17"/><path d="m4 6 7.106-3.553a2 2 0 0 1 1.788 0L20 6"/><path d="M6 5v17"/><circle cx="12" cy="9" r="2"/></symbol>
 
+    <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></symbol>
+    <!-- Marques de plateforme. Le logo Apple est le tracé exact du badge
+         officiel « Télécharger dans l'App Store » (assets/appstore-fr.svg),
+         d'où la boîte hors normes : on ne redessine pas une marque à la main.
+         Le robot Android est une forme géométrique simple, dessinée ici. -->
+    <symbol id="i-apple" viewBox="9.974 8.72 17.717 21.776"><path fill="currentColor" d="M24.7718,20.30068a4.94881,4.94881,0,0,1,2.35656-4.15206,5.06566,5.06566,0,0,0-3.99116-2.15768c-1.67924-.17626-3.30719,1.00483-4.1629,1.00483-.87227,0-2.18977-.98733-3.6085-.95814a5.31529,5.31529,0,0,0-4.47292,2.72787c-1.934,3.34842-.49141,8.26947,1.3612,10.97608.9269,1.32535,2.01018,2.8058,3.42763,2.7533,1.38706-.05753,1.9051-.88448,3.5794-.88448,1.65876,0,2.14479.88448,3.591.8511,1.48838-.02416,2.42613-1.33124,3.32051-2.66914A10.962,10.962,0,0,0,27.691,24.69985,4.78205,4.78205,0,0,1,24.7718,20.30068Z M22.04017,12.21089a4.87248,4.87248,0,0,0,1.11452-3.49062,4.95746,4.95746,0,0,0-3.20758,1.65961,4.63634,4.63634,0,0,0-1.14371,3.36139A4.09905,4.09905,0,0,0,22.04017,12.21089Z"/></symbol>
+    <symbol id="i-android" viewBox="4.5 4.8 15 9.1"><path fill="currentColor" fill-rule="evenodd" d="M5 13.4a7 7 0 0 1 14 0Zm3.25-3.2a.95.95 0 1 0 1.9 0 .95.95 0 0 0-1.9 0Zm5.6 0a.95.95 0 1 0 1.9 0 .95.95 0 0 0-1.9 0Z"/><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="m7.6 8.1-1.7-2.8m8.5 2.8 1.7-2.8"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
     <!-- Logotype « Transco », porté de web/src/components/wordmark.tsx (variante école).
          La barre d’accent lit --wm-accent pour passer en blanc sur fond teal. -->
     <symbol id="w-transco" viewBox="-977.3115 510.0994 599.3319 112.6888">
@@ -706,6 +714,195 @@
             <span class="badge badge-absent"><span class="dot"></span>Absent</span>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= installer l'application =======================
+     Deux voies, dites franchement : l'App Store d'un côté, le fichier .apk
+     de l'autre tant que Google Play n'est pas ouvert. Les deux cartes sont
+     toujours dans le DOM et aucune n'est jamais masquée — la page se consulte
+     souvent sur l'ordinateur de l'école pour un téléphone qui est ailleurs.
+     Le script se contente de mettre en tête celle de l'appareil qui lit la
+     page, en déplaçant le nœud (voir `appPlatform()` dans script.js) : l'ordre
+     de tabulation doit rester celui que l'œil voit.
+
+     Chaque étape porte l'écran qu'elle décrit. Ces maquettes suivent la règle
+     des maquettes de la console : dessinées, jamais des captures, et fidèles à
+     ce que l'utilisateur va réellement voir — l'écran de connexion reprend mot
+     pour mot les libellés de l'application (src/lib/i18n/fr.ts). Les boîtes de
+     dialogue d'Android, elles, sont approchées : leur formulation change d'une
+     marque et d'une version à l'autre, ce que la légende du guide dit. -->
+<section class="sec" id="app">
+  <div class="wrap">
+    <div class="sec-head sec-head-center reveal">
+      <h2 class="h2">Une application, deux façons de l’installer.</h2>
+      <p class="lead">
+        La même application pour les parents et pour les conducteurs&nbsp;: c’est la
+        connexion qui décide de ce que chacun voit. Elle porte le nom de la
+        plateforme — cherchez «&nbsp;Transtra&nbsp;».
+      </p>
+    </div>
+
+    <div class="app-grid stagger" id="app-grid">
+      <article class="card app-card reveal" id="app-ios">
+        <div class="app-head">
+          <svg class="icon" aria-hidden="true"><use href="#i-apple"/></svg>
+          <h3 class="h3">iPhone</h3>
+          <span class="app-yours" hidden>Votre appareil</span>
+        </div>
+        <p>Publiée sur l’App&nbsp;Store&nbsp;: rien à autoriser, rien à configurer.</p>
+
+        <div class="ist-visual ist-visual-flush" aria-hidden="true">
+          <div class="mk mk-store">
+            <img class="mk-appicon" src="assets/app-icon.png" width="128" height="128" alt="" loading="lazy" decoding="async" />
+            <div class="mk-store-txt">
+              <b>Transtra</b>
+              <span>Suivi du bus scolaire</span>
+            </div>
+            <span class="mk-get">OBTENIR</span>
+          </div>
+        </div>
+        <p class="ist-cap">La fiche s’ouvre dans l’App&nbsp;Store&nbsp;; «&nbsp;Obtenir&nbsp;» fait le reste.</p>
+
+        <!-- Badge officiel d'Apple, servi tel quel : c'est une marque, elle ne
+             se redessine pas et ne se recolore pas. -->
+        <a class="app-badge" href="https://apps.apple.com/ma/app/transtra/id6801149227"
+           target="_blank" rel="noopener">
+          <img src="assets/appstore-fr.svg" width="168" height="53"
+               alt="Télécharger Transtra dans l’App Store" />
+        </a>
+        <p class="app-meta">
+          <svg class="icon" aria-hidden="true"><use href="#i-shield-check"/></svg>
+          <span>Vérifiée et distribuée par Apple. Les mises à jour arrivent toutes seules.</span>
+        </p>
+      </article>
+
+      <article class="card app-card reveal" id="app-android">
+        <div class="app-head">
+          <svg class="icon" aria-hidden="true"><use href="#i-android"/></svg>
+          <h3 class="h3">Android</h3>
+          <span class="app-yours" hidden>Votre appareil</span>
+        </div>
+        <p>
+          Pas encore sur Google&nbsp;Play. En attendant, le fichier d’installation se
+          télécharge directement ici.
+        </p>
+        <span class="app-soon"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg>Bientôt sur Google&nbsp;Play</span>
+
+        <a class="btn btn-primary app-cta" id="apk-link"
+           href="https://github.com/irealycode/transtra-seo/releases/download/prod-v1/transtra.apk"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg>Télécharger le fichier&nbsp;(.apk)</a>
+        <p class="app-meta">
+          <svg class="icon" aria-hidden="true"><use href="#i-shield-check"/></svg>
+          <span>Hébergé sur le dépôt officiel de Transtra, environ 154&nbsp;Mo. Les mises à jour
+            ne seront automatiques qu’une fois l’application sur Google&nbsp;Play.</span>
+        </p>
+
+        <!-- Le guide s'ouvre au clic sur le téléchargement : c'est le moment
+             exact où l'on en a besoin, le fichier étant déjà en train d'arriver.
+             Il s'ouvre par-dessus la page plutôt que dans la carte : quatre
+             écrans à suivre dans l'ordre demandent qu'on ne regarde qu'eux, et
+             la page n'a de toute façon plus rien à dire à cet instant.
+
+             Le <dialog> est servi `open` : sans script il n'est pas un dialogue
+             du tout, il retombe dans le flux de la carte et le guide reste
+             lisible. C'est le script qui le referme, puis qui l'ouvre en couche
+             supérieure — lui seul saura le rouvrir. -->
+        <button type="button" class="sheet-open" id="sheet-open" hidden>
+          <svg class="icon" aria-hidden="true"><use href="#i-eye"/></svg>
+          Voir les étapes en images
+        </button>
+        <dialog class="sheet" id="apk-sheet" open aria-labelledby="sheet-title">
+          <div class="sheet-panel" tabindex="-1" autofocus>
+            <div class="sheet-head">
+              <h3 class="h3" id="sheet-title">Installer sur Android</h3>
+              <button type="button" class="sheet-close" id="sheet-close" hidden
+                      aria-label="Fermer le guide">
+                <svg class="icon" aria-hidden="true"><use href="#i-x"/></svg>
+              </button>
+            </div>
+            <div class="sheet-body">
+              <ol class="ist">
+                <li class="ist-step">
+                  <p class="ist-line"><span class="ist-n">1</span>Le téléchargement démarre. Ouvrez le fichier une fois terminé.</p>
+                  <div class="ist-visual" aria-hidden="true">
+                    <div class="mk mk-dl">
+                      <span class="mk-dl-icon"><svg class="icon" aria-hidden="true"><use href="#i-download"/></svg></span>
+                      <div class="mk-dl-txt">
+                        <b>transtra.apk</b>
+                        <span class="mk-bar"><i style="width:62%"></i></span>
+                      </div>
+                      <span class="mk-act">Ouvrir</span>
+                    </div>
+                  </div>
+                </li>
+                <li class="ist-step">
+                  <p class="ist-line"><span class="ist-n">2</span>Android demande l’autorisation d’installer depuis cette source. Accordez-la.</p>
+                  <div class="ist-visual" aria-hidden="true">
+                    <div class="mk mk-perm">
+                      <div class="mk-hd">Installer des applications inconnues</div>
+                      <div class="mk-row">
+                        <span class="mk-src">C</span>
+                        <div class="mk-row-txt">
+                          <b>Chrome</b>
+                          <span>Autoriser depuis cette source</span>
+                        </div>
+                        <span class="mk-switch on"><i></i></span>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li class="ist-step">
+                  <p class="ist-line"><span class="ist-n">3</span>Un avertissement peut s’afficher, parce que l’application ne vient pas encore du Play&nbsp;Store. Choisissez «&nbsp;Installer quand même&nbsp;».</p>
+                  <div class="ist-visual" aria-hidden="true">
+                    <div class="mk mk-dialog">
+                      <span class="mk-warn"><svg class="icon" aria-hidden="true"><use href="#i-triangle-alert"/></svg></span>
+                      <div class="mk-hd">Application non validée</div>
+                      <p class="mk-p">Play&nbsp;Protect ne reconnaît pas le développeur de cette application.</p>
+                      <div class="mk-acts"><span class="mk-act">Ne pas installer</span><span class="mk-act pri">Installer quand même</span></div>
+                    </div>
+                  </div>
+                </li>
+                <li class="ist-step">
+                  <p class="ist-line"><span class="ist-n">4</span>Confirmez l’installation. L’application apparaît alors sur votre écran d’accueil.</p>
+                  <div class="ist-visual" aria-hidden="true">
+                    <div class="mk mk-dialog">
+                      <img class="mk-appicon" src="assets/app-icon.png" width="128" height="128" alt="" loading="lazy" decoding="async" />
+                      <div class="mk-hd">Transtra</div>
+                      <p class="mk-p">Voulez-vous installer cette application&nbsp;?</p>
+                      <div class="mk-acts"><span class="mk-act">Annuler</span><span class="mk-act pri">Installer</span></div>
+                    </div>
+                  </div>
+                </li>
+              </ol>
+              <p class="sheet-note">Écrans reconstitués&nbsp;: leur formulation change selon la marque et la version d’Android.</p>
+            </div>
+          </div>
+        </dialog>
+      </article>
+    </div>
+
+    <div class="card app-final reveal">
+      <div class="ist-visual ist-visual-flush" aria-hidden="true">
+        <div class="mk mk-login">
+          <div class="mk-hd">Se connecter</div>
+          <div class="mk-field"><span class="mk-lab">E-mail</span><span class="mk-inp">vous@entreprise.com</span></div>
+          <div class="mk-field"><span class="mk-lab">Mot de passe</span><span class="mk-inp">Votre mot de passe</span></div>
+          <div class="mk-primary">Se connecter<svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></div>
+        </div>
+      </div>
+      <div class="app-final-txt">
+        <h3 class="h3">Puis connectez-vous, sur l’un comme sur l’autre.</h3>
+        <p>
+          Les identifiants sont remis par votre école. L’application n’affiche votre
+          bus qu’une fois cet accès ouvert par l’établissement&nbsp;: rien ne se crée
+          en libre-service, et l’école referme un accès de la même main.
+        </p>
+        <p class="app-final-ask">
+          Votre école n’utilise pas encore Transco&nbsp;?
+          <a href="#demo">Demandez une démo</a>.
+        </p>
       </div>
     </div>
   </div>

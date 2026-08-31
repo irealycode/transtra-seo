@@ -122,7 +122,7 @@
      Attendre le clic donne une interface morte.
      ===================================================================== */
   (function pressFeedback() {
-    var SEL = ".btn, .df-chip, .phone-tab, .nav a";
+    var SEL = ".btn, .df-chip, .phone-tab, .nav a, .app-badge, .sheet-open, .sheet-close";
     var pressed = null;
     var release = function () {
       if (pressed) { pressed.classList.remove("is-pressed"); pressed = null; }
@@ -569,6 +569,143 @@
     tabs.forEach(function (t, n) { t.tabIndex = n === 0 ? 0 : -1; });
     applyInert();
     spring.set(0);
+  })();
+
+  /* =====================================================================
+     Téléchargement : la carte de l'appareil qui lit la page passe en tête.
+
+     Trois partis, dans l'ordre d'importance :
+
+     1. On ne masque jamais l'autre voie. Un parent consulte souvent la page
+        sur un ordinateur pour un téléphone qui est ailleurs, et une école
+        présente les deux à ses familles. La détection ne fait que hiérarchiser.
+     2. On déplace le nœud plutôt que de jouer sur `order` : avec `order`,
+        l'ordre de tabulation resterait celui du DOM et cesserait de suivre
+        l'œil. Ici les deux restent d'accord.
+     3. Sans script, ou en cas de doute (bureau, ou les deux signaux à la
+        fois), on ne tranche pas : les cartes restent dans l'ordre du DOM.
+        C'est le repli, pas une dégradation.
+     ===================================================================== */
+  (function appPlatform() {
+    var grid = document.getElementById("app-grid");
+    if (!grid) return;
+
+    var ua = navigator.userAgent || "";
+    // iPadOS 13+ se présente comme un Mac de bureau : seul le multipoint le
+    // trahit (un Mac sans écran tactile rapporte 0).
+    var isIOS = /iPad|iPhone|iPod/.test(ua) ||
+      (/Mac/.test(ua) && navigator.maxTouchPoints > 1);
+    var isAndroid = /Android/.test(ua);
+    if (isIOS === isAndroid) return;
+
+    var card = document.getElementById(isIOS ? "app-ios" : "app-android");
+    if (!card) return;
+
+    if (card !== grid.firstElementChild) grid.insertBefore(card, grid.firstElementChild);
+    card.classList.add("is-yours");
+    var flag = card.querySelector(".app-yours");
+    if (flag) flag.hidden = false;
+  })();
+
+  /* =====================================================================
+     Guide d'installation Android : il s'ouvre par-dessus la page, au clic
+     sur le téléchargement.
+
+     Le moment est choisi, pas décoratif — au clic, le fichier part, et la
+     question suivante (« et maintenant ? ») arrive dans la seconde. Le guide
+     répond avant qu'elle soit posée, et il prend l'écran parce que quatre
+     écrans à suivre dans l'ordre ne se lisent pas du coin de l'œil.
+
+     Le <dialog> est écrit `open` dans le HTML : sans script, ni ici ni dans
+     un navigateur sans `showModal()`, il retombe en simple bloc dans la carte
+     et le guide reste entièrement lisible. C'est le repli, pas une
+     dégradation — d'où la sortie anticipée plutôt qu'un polyfill.
+
+     Le natif fait le reste et le fait mieux : couche supérieure (aucun
+     ancêtre ne peut le rogner), piège de focus, Échap, et retour du focus au
+     bouton d'où l'on vient. On ne lui reprend que la fermeture, pour que le
+     voile ait le temps de s'effacer avant de quitter la couche supérieure.
+     ===================================================================== */
+  (function apkSheet() {
+    var sheet = document.getElementById("apk-sheet");
+    var opener = document.getElementById("sheet-open");
+    var closer = document.getElementById("sheet-close");
+    var link = document.getElementById("apk-link");
+    if (!sheet || !opener) return;
+    if (typeof sheet.showModal !== "function") return;
+
+    var root = document.documentElement;
+    var closeTimer = 0;
+
+    sheet.close();
+    opener.hidden = false;
+    if (closer) closer.hidden = false;
+
+    function open() {
+      if (sheet.open) return;
+      clearTimeout(closeTimer);
+
+      // La barre de défilement disparaît avec le verrou : on rend sa largeur
+      // en marge, sinon toute la page glisse au moment de l'ouverture.
+      var gutter = window.innerWidth - root.clientWidth;
+      if (gutter > 0) root.style.paddingRight = gutter + "px";
+      root.classList.add("sheet-locked");
+
+      sheet.classList.add("is-modal");
+      sheet.showModal();
+
+      if (REDUCED) { sheet.classList.add("is-open"); return; }
+      // Deux images : la première pose l'état de départ, la seconde le quitte.
+      // Sans cela le navigateur ne voit qu'une valeur et ne transite pas.
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () { sheet.classList.add("is-open"); });
+      });
+    }
+
+    function done() {
+      clearTimeout(closeTimer);
+      sheet.close();
+      sheet.classList.remove("is-modal");
+      root.classList.remove("sheet-locked");
+      root.style.paddingRight = "";
+    }
+
+    function close() {
+      if (!sheet.open) return;
+      sheet.classList.remove("is-open");
+      if (REDUCED) { done(); return; }
+
+      var end = function (e) {
+        // seul le fondu du voile compte : celui du panneau arrive avant
+        if (e && e.target !== sheet) return;
+        sheet.removeEventListener("transitionend", end);
+        done();
+      };
+      sheet.addEventListener("transitionend", end);
+      // garde-fou : une transition qui ne démarre pas ne doit pas laisser le
+      // guide ouvert et la page verrouillée
+      closeTimer = setTimeout(function () {
+        sheet.removeEventListener("transitionend", end);
+        done();
+      }, 600);
+    }
+
+    opener.addEventListener("click", open);
+    // Pas de `preventDefault` : le téléchargement part, le guide s'ouvre.
+    if (link) link.addEventListener("click", open);
+    if (closer) closer.addEventListener("click", close);
+
+    // Le voile est le dialogue lui-même : un clic qui l'atteint est un clic
+    // à côté du panneau, donc une demande de fermeture.
+    sheet.addEventListener("click", function (e) {
+      if (e.target === sheet) close();
+    });
+
+    // Échap : on reprend la main pour laisser le voile s'effacer.
+    sheet.addEventListener("cancel", function (e) {
+      e.preventDefault();
+      close();
+    });
   })();
 
   /* =====================================================================
