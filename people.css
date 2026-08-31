@@ -1,0 +1,276 @@
+/* ===========================================================================
+   Transco — couche « visages » du site principal.
+
+   Ce fichier a commencé comme une variante à comparer ; c'est aujourd'hui la
+   page d'accueil. Il reste une feuille à part parce qu'il ne contient qu'une
+   chose : ce que l'imagerie impose. `styles.css` garde le système — jetons,
+   ressorts, matériaux — et vaut pour les deux pages, celle-ci comme
+   l'archive dans /old. Fusionner les deux fichiers ferait perdre cette
+   frontière, qui dit exactement où s'arrête le système et où commence la
+   mise en scène.
+
+   Parti pris : la page s'ouvre sur une scène réelle — un plein écran, une
+   marche vers l'école — et la console arrive juste après comme preuve.
+   L'argument passe de « voici le logiciel » à « voici le matin de votre
+   école, et voici le logiciel qui le tient ».
+
+   Règle tenue sur toutes les images : les adultes portent les visages, les
+   enfants sont vus de dos ou à distance. Une page qui vend le suivi de la
+   position d'enfants est le pire endroit où poser des visages d'enfants.
+   ======================================================================== */
+
+/* ========================= héros : la boucle vidéo =======================
+   Plein écran, à la hauteur exacte de la fenêtre. `svh` plutôt que `vh` :
+   sur mobile, `vh` se mesure fenêtre déployée, et le héros dépasse d'une
+   bande égale à la barre d'adresse au premier défilement. */
+.hero-film {
+  position: relative;
+  overflow: clip;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  min-height: 100svh;
+  /* La vidéo passe SOUS la barre : un héros pleine image qui commencerait au
+     ras du bandeau laisserait une bande vide au-dessus. Le retrait annule la
+     place occupée par la barre collante ; le rembourrage haut la rend au
+     contenu, qui se retrouve centré dans la zone réellement visible. */
+  margin-top: calc(-1 * var(--chrome-h));
+  padding-top: var(--chrome-h);
+  padding-bottom: clamp(2.5rem, 7vh, 4.5rem);
+  text-align: center;
+  /* L'affiche est portée par la section, pas par l'attribut `poster` : le
+     navigateur choisit alors le bon cadrage tout seul, sans script et sans
+     charger les deux. Posée en `poster`, la version paysage partait toujours,
+     puis le script en demandait une seconde sur téléphone. C'est aussi ce qui
+     tient le héros quand la vidéo ne joue pas — mouvement réduit, ou pas de
+     script du tout. */
+  background: var(--ink) url("assets/people/hero-ecole-poster.webp") 50% 38% / cover no-repeat;
+}
+@media (max-aspect-ratio: 5/8) {
+  .hero-film {
+    background-image: url("assets/people/hero-ecole-poster-portrait.webp");
+    background-position: 50% 50%;
+  }
+}
+.hero-film-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* on cadre vers le haut : c'est là que sont le cartable et l'école */
+  object-position: 50% 38%;
+}
+/* En portrait, c'est le fichier déjà recadré qui est servi (voir script.js) :
+   le sujet y est au centre, il ne faut plus décaler quoi que ce soit. */
+@media (max-aspect-ratio: 5/8) {
+  .hero-film-video { object-position: 50% 50%; }
+}
+
+/* Voile : il ne « fonce » pas l'image, il creuse un socle lisible sous le
+   texte. Le bloc étant centré, le socle l'est aussi — une ellipse plutôt
+   qu'un dégradé du haut vers le bas, qui aurait noyé le sujet dans le tiers
+   inférieur pour protéger un texte qui n'y est plus. Restent deux voiles
+   légers : le haut, où passe la barre, et le bas, où se pose le crédit. */
+.hero-film-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(118% 82% at 50% 47%,
+      oklch(0.14 0.028 236 / 0.74) 0%,
+      oklch(0.14 0.028 236 / 0.52) 45%,
+      transparent 78%),
+    linear-gradient(to bottom,
+      oklch(0.15 0.03 236 / 0.58) 0%,
+      oklch(0.15 0.03 236 / 0.22) 34%,
+      oklch(0.15 0.03 236 / 0.24) 66%,
+      oklch(0.13 0.028 236 / 0.62) 100%);
+}
+.hero-film-content {
+  position: relative;
+  color: var(--on-ink);
+  max-width: 62rem;
+}
+.hero-film-content h1 { margin-top: 1.6rem; color: var(--on-ink); }
+.hero-film-content h1 .accent-ink { color: var(--accent-on-ink); }
+.hero-film-content .lead {
+  margin: 1.4rem auto 0;
+  max-width: 36ch;
+  color: oklch(0.94 0.012 220);
+}
+.hero-film-content .micro { color: oklch(0.84 0.014 220); }
+.hero-film .hero-ctas { justify-content: center; }
+
+/* La pastille est le seul texte du héros posé sur sa propre surface. Un voile
+   blanc à 12 % suffisait sur une photo figée ; sur une image qui bouge, la
+   mesure descend à 3,8:1 quand un mur clair passe dessous. Le matériau est
+   donc sombre : un voile translucide doit toujours peser plus lourd que ce
+   qu'il recouvre, et ici ce qu'il recouvre change à chaque image. */
+.hero-film .hero-badge {
+  color: var(--on-ink);
+  background: oklch(0.17 0.028 236 / 0.6);
+  border-color: var(--border-ink-strong);
+  backdrop-filter: blur(14px) saturate(150%);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  box-shadow: var(--mat-edge-ink);
+}
+
+/* crédit discret : l'image n'est pas de nous, on le dit sur l'image même */
+.hero-credit {
+  position: absolute;
+  right: clamp(0.75rem, 3vw, 1.5rem);
+  bottom: 0.6rem;
+  font-size: 0.6875rem;
+  letter-spacing: var(--tr-small);
+  color: oklch(1 0 0 / 0.55);
+}
+
+/* ====================== la console devient la preuve ==================== */
+/* Le mock n'ouvre plus la page : il répond au héros. Le rapprochement des
+   deux sections fait lire « promesse → preuve » comme un seul mouvement. */
+.proof { padding-top: clamp(3rem, 6vw, 5rem); }
+.proof .hero-stage { margin-top: clamp(2rem, 4vw, 3rem); }
+/* La maquette n'est plus au chargement : elle se révèle au défilement comme
+   les autres blocs. On coupe donc la cascade d'entrée du héros, qui se
+   jouerait hors écran et entrerait en conflit avec `.reveal`. */
+.proof .hero-stage { animation: none; }
+
+/* ============================ rôles et visages ==========================
+   Ce bloc remplace la rangée de témoignages qu'on aurait pu attendre ici.
+   Des citations clients inventées sous des visages de banque d'images
+   seraient de faux témoignages : on montre donc les visages, et on écrit ce
+   que chaque rôle voit réellement dans le produit. Rien n'est inventé.
+
+   Forme : trois bandes en vis-à-vis, séparées par un simple filet. Pas de
+   cartes — trois blocs identiques à icône, titre et texte auraient été le
+   réflexe, et la page en compte déjà (les tuiles de la console). L'alternance
+   gauche/droite donne au bloc son propre rythme et laisse au texte la largeur
+   qu'une carte lui refusait. */
+.roles { display: flex; flex-direction: column; }
+.role {
+  display: grid;
+  /* la photo tient à peu près la moitié : plus étroite, elle redevenait une
+     vignette de carte, ce que ce bloc cherche justement à ne plus être */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  align-items: center;
+  gap: clamp(1.5rem, 5vw, 4rem);
+  padding-block: clamp(2.25rem, 5vw, 3.75rem);
+}
+.role + .role { border-top: 1px solid var(--border); }
+/* Une rangée sur deux se retourne ; l'ordre du DOM ne bouge pas, chaque
+   rangée se lisant de toute façon comme un tout.
+   Les proportions se retournent avec : déplacer la photo dans la colonne 2
+   sans échanger les pistes lui donnait la largeur réservée au texte, et une
+   rangée sur deux affichait une photo plus grande que les autres. */
+.roles > .role:nth-child(even) {
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+}
+.roles > .role:nth-child(even) > .role-figure { grid-column: 2; grid-row: 1; }
+.roles > .role:nth-child(even) > .role-text { grid-column: 1; grid-row: 1; }
+
+.role-figure {
+  position: relative;
+  margin: 0;
+  aspect-ratio: 1 / 1;
+  overflow: clip;
+  border-radius: var(--r-lg);
+  background: var(--panel-3);
+}
+/* L'image est sortie du flux : autrement sa hauteur intrinsèque l'emporte et
+   l'`aspect-ratio` du cadre reste sans effet. */
+.role-figure img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 28%;
+}
+
+.role-text { display: flex; flex-direction: column; gap: 0.9rem; }
+.role-who {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: var(--fs-micro);
+  font-weight: 640;
+  letter-spacing: var(--tr-small);
+  color: var(--accent);
+}
+.role-who .icon { width: 17px; height: 17px; }
+/* Le titre de rangée porte le bloc : au pas des `h3` du reste de la page il
+   se serait effacé derrière la photo qui lui fait face. */
+.role-text > h3 {
+  max-width: 27ch;
+  font-size: clamp(1.25rem, 2vw, 1.6rem);
+}
+.role-lede {
+  max-width: 54ch;
+  color: var(--text-muted);
+  text-wrap: pretty;
+}
+
+/* La liste est en filets plutôt qu'en puces : quatre coches vertes répétées
+   trois fois relevaient du remplissage, la ligne suffit à séparer. */
+.role-list {
+  margin: 0.25rem 0 0;
+  padding: 0;
+  list-style: none;
+  max-width: 54ch;
+}
+.role-list li {
+  padding-block: 0.62rem;
+  border-top: 1px solid var(--border);
+  font-size: var(--fs-body);
+  line-height: 1.45;
+  color: var(--text);
+}
+.role-list li:last-child { padding-bottom: 0; }
+
+/* ce que le rôle ne voit pas compte autant que ce qu'il voit */
+.role-limit {
+  margin-top: 0.7rem;
+  max-width: 54ch;
+  font-size: var(--fs-small);
+  color: var(--text-muted);
+  text-wrap: pretty;
+}
+.role-limit .role-limit-k { font-weight: 660; color: var(--text); }
+
+@media (max-width: 720px) {
+  /* Les deux sélecteurs sont nommés : la règle d'alternance porte une
+     spécificité plus forte que `.role`, et une rangée sur deux restait sur
+     deux colonnes — photo minuscule, texte en colonne étroite. */
+  .role,
+  .roles > .role:nth-child(even) {
+    grid-template-columns: 1fr;
+    gap: clamp(1.1rem, 4vw, 1.6rem);
+  }
+  /* en colonne, la photo repasse toujours en tête : l'alternance n'a plus
+     d'axe où jouer et laisserait une rangée sur deux commencer par du texte */
+  .roles > .role:nth-child(even) > .role-figure { grid-column: 1; grid-row: 1; }
+  .roles > .role:nth-child(even) > .role-text { grid-column: 1; grid-row: 2; }
+  /* en bandeau, on descend le cadrage : ces portraits ont le visage au tiers
+     inférieur, un cadrage haut ne montrait qu'un front et un plafond */
+  .role-figure { aspect-ratio: 3 / 2; }
+  .role-figure img { object-position: 50% 38%; }
+}
+
+/* ---- repli d'affichage ---- */
+@media (prefers-reduced-transparency: reduce) {
+  .hero-film .hero-badge {
+    background: oklch(0.22 0.03 236);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+@media (prefers-contrast: more) {
+  /* on épaissit le voile plutôt que d'éclaircir le texte : le contraste vient
+     du socle, jamais d'un blanc qui brûlerait sur les hautes lumières */
+  .hero-film-shade {
+    background: linear-gradient(to bottom,
+      oklch(0.14 0.03 236 / 0.88), oklch(0.12 0.028 236 / 0.94));
+  }
+  .role + .role,
+  .role-list li { border-color: var(--border-strong); }
+}

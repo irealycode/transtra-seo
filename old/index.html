@@ -1,13 +1,29 @@
 <!doctype html>
+<!-- ===========================================================================
+     ARCHIVE — version antérieure du site, portée par le produit : la console
+     ouvrait la page, et la photographie n'y figurait pas. Remplacée par la
+     version portée par les visages, désormais à la racine.
+
+     Cette page est GELÉE. Elle emporte ses propres `styles.css` et
+     `script.js` (copies datées du jour du remplacement) précisément pour que
+     les évolutions du site principal ne puissent pas la casser. Ne pas y
+     corriger de bogue : ce qui compte ici, c'est qu'elle reste ce qu'elle
+     était. Seules les images sont partagées, via `../assets/`.
+     ======================================================================== -->
 <html lang="fr">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Transco — Suivi du bus scolaire en temps réel</title>
-<meta name="description" content="Transco met les bus de votre école en direct : les parents suivent le bus de leur enfant, l’école voit toute sa flotte, et chaque embarquement est confirmé." />
+<title>Transco — version précédente du site (archive)</title>
+<meta name="description" content="Archive : version antérieure du site vitrine Transco, portée par le produit." />
+<!-- Le site n'a qu'une page à référencer. Sans cette ligne, l'archive
+     concurrencerait la page d'accueil sur les mêmes mots, avec presque le
+     même texte : c'est exactement ce que les moteurs pénalisent. -->
+<meta name="robots" content="noindex, nofollow" />
+<link rel="canonical" href="https://transtra.net/" />
 <meta name="theme-color" content="#f7f9fb" />
-<link rel="icon" type="image/svg+xml" href="assets/icon_school.svg" />
-<link rel="preload" href="assets/fonts/figtree-latin.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="icon" type="image/svg+xml" href="../assets/icon_school.svg" />
+<link rel="preload" href="../assets/fonts/figtree-latin.woff2" as="font" type="font/woff2" crossorigin />
 <script>
 /* Intro : une fois par session, jamais sous mouvement réduit.
    Décidée avant le premier rendu pour éviter tout flash. */
@@ -22,7 +38,6 @@
 })();
 </script>
 <link rel="stylesheet" href="styles.css" />
-<link rel="stylesheet" href="people.css" />
 </head>
 <body>
 
@@ -81,34 +96,19 @@
       <span class="nav-pill" aria-hidden="true"></span>
       <a href="#fonctionnement">Fonctionnement</a>
       <a href="#parents">Parents</a>
-      <a href="#roles">Rôles</a>
       <a href="#console">Console école</a>
+      <a href="#securite">Sécurité</a>
     </nav>
     <a class="btn btn-primary chrome-cta" href="#demo">Demander une démo</a>
   </div>
 </header>
 
 <main>
-<!-- =========================== héros : la vidéo ===========================
-     Plein écran, à la hauteur exacte de la fenêtre. La page s'ouvre sur une
-     scène réelle et la console arrive juste après, en preuve. L'enfant est
-     filmé de dos : aucun visage d'enfant sur cette page. -->
-<section class="hero-film">
-  <!-- Décor : muette, sans commande, hors de l'ordre de tabulation. L'affiche
-       est peinte par la section elle-même (voir `.hero-film` dans people.css),
-       ce qui la laisse visible tant que la boucle n'a pas démarré — et pour
-       toujours sous mouvement réduit ou sans script. Le script choisit la
-       source selon la forme de la fenêtre : un téléphone reçoit un fichier
-       déjà recadré, deux fois plus léger. C'est pourquoi elle n'est pas
-       écrite ici (voir `film()` dans script.js). -->
-  <video class="hero-film-video" muted loop playsinline preload="none"
-    data-src="assets/people/hero-ecole.mp4"
-    data-src-portrait="assets/people/hero-ecole-portrait.mp4"
-    aria-hidden="true" tabindex="-1"></video>
-  <div class="hero-film-shade" aria-hidden="true"></div>
-  <div class="wrap hero-film-content">
+<!-- ================================= héros ================================= -->
+<section class="hero">
+  <div class="wrap">
     <span class="hero-badge hero-rise">
-      <img src="assets/icon_school.svg" alt="" />
+      <img src="../assets/icon_school.svg" alt="" />
       Suivi du bus scolaire
     </span>
     <h1 class="display hero-rise">Chaque trajet scolaire, <span class="accent-ink">en direct.</span></h1>
@@ -118,28 +118,13 @@
     </p>
     <div class="hero-ctas hero-rise">
       <a class="btn btn-primary" href="#demo">Demander une démo</a>
-      <a class="btn btn-ghost-ink" href="#fonctionnement">Comment ça marche</a>
+      <a class="btn btn-ghost" href="#fonctionnement">Comment ça marche</a>
     </div>
     <p class="micro hero-note">Transco est le volet scolaire de la plateforme Transtra.</p>
   </div>
-  <span class="hero-credit">Vidéo&nbsp;: Mixkit</span>
-</section>
 
-<!-- ====================== la console, en preuve immédiate ==================
-     Le mock n'ouvre plus la page : il répond au héros. -->
-<section class="sec sec-tint proof" id="apercu">
-  <div class="wrap">
-    <div class="sec-head sec-head-center reveal">
-      <h2 class="h2">Et voici le logiciel qui tient cette promesse.</h2>
-      <p class="lead">
-        La console que votre école ouvre chaque matin&nbsp;: chaque bus en
-        service, sa position réelle, et l’état de chaque course.
-      </p>
-    </div>
-  </div>
-
-  <!-- maquette de la console école (composants réels du tableau de bord) -->
-  <div class="wrap hero-stage reveal">
+  <!-- scène : maquette de la console école (composants réels du tableau de bord) -->
+  <div class="wrap hero-stage">
     <div class="hero-mock" role="img" aria-label="Aperçu de la console école : barre latérale de navigation, indicateurs de flotte et carte en direct avec trois bus suivis.">
       <aside class="mock-side">
         <div class="mock-side-brand">
@@ -210,7 +195,7 @@
             <!-- Carte réelle : trajet R-004 « trajet bus 7 » (Tétouan), tracé routier
                  OSRM sur fond CARTO Positron — comme dans la vraie console. -->
             <svg class="mapbase" viewBox="0 0 720 400" aria-hidden="true">
-              <image href="assets/map-r004.webp" width="720" height="400"/>
+              <image href="../assets/map-r004.webp" width="720" height="400"/>
               <!-- arrêts réels de R-004 : origine (vert), intermédiaires (teal), destination (rouge) -->
               <g stroke="#ffffff" stroke-width="2">
                 <circle cx="396.2" cy="192.5" r="6" fill="oklch(0.5 0.12 155)"/>
@@ -278,7 +263,7 @@
 </section>
 
 <!-- ============================ fonctionnement ============================ -->
-<section class="sec" id="fonctionnement">
+<section class="sec sec-tint" id="fonctionnement">
   <div class="wrap">
     <div class="sec-head sec-head-center reveal">
       <h2 class="h2">Aucun boîtier GPS. Un simple scan au départ.</h2>
@@ -318,7 +303,7 @@
 </section>
 
 <!-- ================================ parents =============================== -->
-<section class="sec sec-airy sec-tint" id="parents">
+<section class="sec sec-airy" id="parents">
   <div class="wrap split">
     <div class="reveal">
       <h2 class="h2">
@@ -528,83 +513,6 @@
   </div>
 </section>
 
-<!-- ============================ rôles et visages ==========================
-     Ce bloc occupe la place où l'on attendrait des témoignages. Il n'en porte
-     pas : inventer des citations de clients sous des visages de banque
-     d'images fabriquerait de faux témoignages. On montre donc les visages, et
-     on écrit ce que chaque rôle voit réellement dans le produit — y compris
-     ce qu'il ne voit pas, qui est l'argument le plus fort de la page. -->
-<section class="sec sec-airy" id="roles">
-  <div class="wrap">
-    <div class="sec-head sec-head-center reveal">
-      <h2 class="h2">Trois rôles, trois écrans.</h2>
-      <p class="lead">
-        Chacun voit ce qui le concerne, et rien de plus. C’est la même règle
-        qui protège les élèves et qui rend l’outil simple à prendre en main.
-      </p>
-    </div>
-
-    <div class="roles">
-      <article class="role reveal">
-        <figure class="role-figure">
-          <img src="assets/people/role-parent.webp" width="760" height="950" loading="lazy" decoding="async"
-            alt="Une mère consulte son téléphone, à contre-jour dans l’encadrement d’une porte." />
-        </figure>
-        <div class="role-text">
-          <p class="role-who"><svg class="icon" aria-hidden="true"><use href="#i-user-round"/></svg>Le parent</p>
-          <h3 class="h3">Un écran ouvert deux fois par jour.</h3>
-          <p class="role-lede">Le matin et le soir, une seule question&nbsp;: où est le bus, et l’enfant est-il bien monté.</p>
-          <ul class="role-list">
-            <li>Le bus de son enfant sur la carte, en direct</li>
-            <li>L’heure d’arrivée estimée à son arrêt</li>
-            <li>La confirmation de montée et de descente</li>
-            <li>Les retards annoncés tels qu’ils sont</li>
-          </ul>
-          <p class="role-limit"><span class="role-limit-k">Ne voit pas</span> les autres élèves, ni aucun circuit que celui de son enfant.</p>
-        </div>
-      </article>
-
-      <article class="role reveal">
-        <figure class="role-figure">
-          <img src="assets/people/role-conducteur.webp" width="760" height="950" loading="lazy" decoding="async"
-            alt="Un conducteur de bus au volant, à son poste, pendant son service." />
-        </figure>
-        <div class="role-text">
-          <p class="role-who"><svg class="icon" aria-hidden="true"><use href="#i-bus-front"/></svg>Le conducteur</p>
-          <h3 class="h3">Son téléphone devient le GPS du bus.</h3>
-          <p class="role-lede">Aucun boîtier à installer, aucun abonnement matériel, rien à entretenir dans le véhicule.</p>
-          <ul class="role-list">
-            <li>Scanne le QR du bus au début du service</li>
-            <li>Pointe chaque montée et chaque descente</li>
-            <li>Signale un incident depuis la route</li>
-            <li>Voit sa course du jour et ses arrêts</li>
-          </ul>
-          <p class="role-limit"><span class="role-limit-k">Ne voit pas</span> les coordonnées des familles, ni les autres circuits de l’école.</p>
-        </div>
-      </article>
-
-      <article class="role reveal">
-        <figure class="role-figure">
-          <img src="assets/people/role-ecole.webp" width="760" height="950" loading="lazy" decoding="async"
-            alt="Une responsable administrative annote un registre à son bureau, ordinateur portable ouvert." />
-        </figure>
-        <div class="role-text">
-          <p class="role-who"><svg class="icon" aria-hidden="true"><use href="#i-layout-dashboard"/></svg>L’école</p>
-          <h3 class="h3">La vue d’ensemble, et la main sur les accès.</h3>
-          <p class="role-lede">La flotte, les courses du jour, l’état réel de chacune. Et le pouvoir d’ouvrir ou de fermer chaque accès.</p>
-          <ul class="role-list">
-            <li>Tous les bus en service sur une carte</li>
-            <li>Les courses, leurs retards et leurs incidents</li>
-            <li>Les élèves, leurs arrêts et leur présence</li>
-            <li>Qui accède à quoi, révocable à tout moment</li>
-          </ul>
-          <p class="role-limit"><span class="role-limit-k">Ne partage rien</span> par défaut&nbsp;: chaque accès est ouvert par l’école, et se referme de la même main.</p>
-        </div>
-      </article>
-    </div>
-  </div>
-</section>
-
 <!-- ================================ console =============================== -->
 <section class="sec sec-tint" id="console">
   <div class="wrap">
@@ -654,7 +562,7 @@
         </p>
         <div class="tile-visual editor-visual">
           <!-- capture réelle de l'éditeur « Trajets et arrêts » : R-004 et ses 11 arrêts -->
-          <img src="assets/routes-editor.webp" width="1400" height="826" loading="lazy" decoding="async"
+          <img src="../assets/routes-editor.webp" width="1400" height="826" loading="lazy" decoding="async"
             alt="Éditeur de trajets de la console : le circuit R-004 et ses 11 arrêts numérotés tracés sur la carte de Tétouan." />
           <span class="editor-hint">Cliquez sur la carte pour ajouter un arrêt</span>
           <span class="map-attr">© OpenStreetMap · © CARTO</span>
@@ -706,6 +614,39 @@
             <span class="badge badge-absent"><span class="dot"></span>Absent</span>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============================== sécurité ===============================
+     Le seul moment sombre de la page : le ton change quand on parle de
+     données d'enfants. -->
+<section class="sec sec-airy sec-ink" id="securite">
+  <div class="wrap">
+    <div class="sec-head sec-head-center reveal">
+      <h2 class="h2">Conçu pour des données d’enfants. Donc conçu strict.</h2>
+      <p class="lead">
+        Chaque rôle ne voit que ce qui le concerne, chaque accès est révocable,
+        et l’état réel des données est toujours affiché.
+      </p>
+    </div>
+    <div class="trust-grid stagger">
+      <div class="trust-item reveal">
+        <h3 class="h3"><svg class="icon" aria-hidden="true"><use href="#i-shield-check"/></svg>Des rôles étanches</h3>
+        <p>École, conducteurs et parents ne voient chacun que ce qui les concerne. Un parent ne suit que le bus de son propre enfant, jamais celui des autres.</p>
+      </div>
+      <div class="trust-item reveal">
+        <h3 class="h3"><svg class="icon" aria-hidden="true"><use href="#i-qr-code"/></svg>QR à jeton unique</h3>
+        <p>Le code QR de chaque bus porte un jeton secret, affiché une seule fois et révocable à tout moment. Impossible d’usurper un véhicule.</p>
+      </div>
+      <div class="trust-item reveal">
+        <h3 class="h3"><svg class="icon" aria-hidden="true"><use href="#i-eye"/></svg>Des données honnêtes</h3>
+        <p>L’état de la connexion et la fraîcheur de chaque position sont toujours affichés. Une donnée périmée n’est jamais présentée comme en direct.</p>
+      </div>
+      <div class="trust-item reveal">
+        <h3 class="h3"><svg class="icon" aria-hidden="true"><use href="#i-languages"/></svg>Accessible et bilingue</h3>
+        <p>Console et applications respectent le contraste WCAG AA, honorent la réduction des animations et existent en français comme en anglais.</p>
       </div>
     </div>
   </div>
@@ -819,8 +760,8 @@
        de page. Le script la charge et la lance quand elle entre à l'écran, et
        jamais sous mouvement réduit — où seule l'affiche est utile. -->
   <video class="film-video" muted loop playsinline preload="none"
-    poster="assets/bus-ecole-poster.jpg" aria-hidden="true">
-    <source src="assets/bus-ecole.mp4" type="video/mp4" />
+    poster="../assets/bus-ecole-poster.jpg" aria-hidden="true">
+    <source src="../assets/bus-ecole.mp4" type="video/mp4" />
   </video>
   <div class="film-shade" aria-hidden="true"></div>
   <div class="wrap film-content">
@@ -836,8 +777,8 @@
       </div>
       <!-- Voie de contact directe : le formulaire dépend d'un relais externe,
            et le public est habitué à écrire plutôt qu'à remplir un formulaire. -->
-      <a class="footer-contact" href="mailto:contact@transtra.net">contact@transtra.net</a>
-      <div class="footer-meta">© 2026 Transtra · Photos&nbsp;: Unsplash · Vidéos&nbsp;: Mixkit, Pexels</div>
+      <a class="footer-contact" href="mailto:contact@transtra.app">contact@transtra.app</a>
+      <div class="footer-meta">© 2026 Transtra · Vidéo&nbsp;: Pexels</div>
     </div>
   </footer>
 </section>
