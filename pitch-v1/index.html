@@ -9,6 +9,14 @@
      dans les résultats de recherche à la place de la page d'accueil. Le lien
      reste partageable tel quel. -->
 <meta name="robots" content="noindex, nofollow" />
+<!-- Safari sur iPad n'ouvre pas le plein écran depuis une page. Ajoutée à
+     l'écran d'accueil, la présentation se lance alors sans aucune chrome :
+     c'est la seule voie vraiment plein écran sur iPad. -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Transco" />
+<link rel="apple-touch-icon" href="../assets/app-icon.png" />
 <link rel="icon" type="image/svg+xml" href="../assets/icon_school.svg" />
 <!-- Reset : l'hôte des artefacts le fournissait, la page autonome doit le porter. -->
 <style>
@@ -623,7 +631,37 @@ input[type="range"]:focus-visible { outline: 2px solid var(--accent-on-ink); out
 .nav-hint.gone { opacity: 0; pointer-events: none; }
 @media (prefers-reduced-motion: reduce) { .nav-hint { transition: none; } }
 
+/* ========================= commande plein écran =======================
+   Présentation sur tablette : la barre du navigateur mange une slide
+   calibrée à 100dvh. Le bouton ouvre le plein écran au début, s'efface une
+   fois dedans, et réapparaît sur la dernière slide pour en sortir. */
+.fs-btn {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 13px 22px; min-height: 48px;      /* cible tactile confortable */
+  border-radius: var(--r-pill); border: 1px solid transparent;
+  background: var(--accent); color: #fff;
+  font: inherit; font-size: clamp(14px, min(1.35vw, 2.2vh), 17px);
+  font-weight: 680; letter-spacing: -0.006em;
+  cursor: pointer; box-shadow: var(--sh-sm);
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 140ms var(--e-smooth), filter 140ms var(--e-smooth);
+}
+.fs-btn .icon { width: 18px; height: 18px; }
+.fs-btn:hover { filter: brightness(1.07); }
+.fs-btn:active { transform: scale(0.97); }
+/* Sur fond sombre le teal s'éclaircit : l'encre redevient la couleur lisible. */
+.slide.ink .fs-btn { background: var(--accent-on-ink); color: var(--ink); }
+:root[data-theme="dark"] .fs-btn { color: oklch(0.16 0.02 240); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .fs-btn { color: oklch(0.16 0.02 240); }
+}
+@media (prefers-reduced-motion: reduce) { .fs-btn { transition: none; } }
+
+.cover-actions { margin-top: clamp(18px, 3.2vh, 34px); display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+.end-actions { margin-top: clamp(18px, 3vh, 30px); }
+
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+.slide.ink :focus-visible { outline-color: var(--accent-on-ink); }
 
 /* =============================== réactif =============================== */
 
@@ -686,6 +724,8 @@ input[type="range"]:focus-visible { outline: 2px solid var(--accent-on-ink); out
     <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></symbol>
     <symbol id="i-map" viewBox="0 0 24 24"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/></symbol>
     <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M10.7 5.1A9 9 0 0 1 12 5c5 0 9 4.5 9 7a12 12 0 0 1-2.2 3.1M6.6 6.6C4.3 8 3 10.2 3 12c0 2.5 4 7 9 7 1.7 0 3.2-.5 4.5-1.2"/><path d="m2 2 20 20"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></symbol>
+    <symbol id="i-maximize" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></symbol>
+    <symbol id="i-minimize" viewBox="0 0 24 24"><path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/></symbol>
   </defs>
 </svg>
 
@@ -704,6 +744,21 @@ input[type="range"]:focus-visible { outline: 2px solid var(--accent-on-ink); out
     </div>
     <h1>Chaque trajet scolaire,<br>en&nbsp;direct.</h1>
     <p class="lede">Aucun boîtier GPS. Le téléphone du conducteur suffit.</p>
+
+    <div class="cover-actions">
+      <button type="button" class="fs-btn" id="fs-enter" hidden>
+        <svg class="icon" aria-hidden="true"><use href="#i-maximize"/></svg>
+        Passer en plein écran
+      </button>
+      <!-- Safari sur iPad n'ouvre pas le plein écran depuis une page : on dit
+           la manœuvre qui marche plutôt que de laisser un bouton inerte. -->
+      <p class="note" id="fs-tip" hidden>
+        Pour un affichage plein écran sur cette tablette&nbsp;: bouton
+        <strong>Partager</strong>, puis <strong>Sur l’écran d’accueil</strong>.
+        Ouvrez ensuite la présentation depuis cette icône.
+      </p>
+    </div>
+
     <div class="cover-meta">
       <span><b>Sohaib Boulaich</b> · Fondateur</span>
       <span>Écoles de <b>Tétouan</b></span>
@@ -1239,6 +1294,13 @@ input[type="range"]:focus-visible { outline: 2px solid var(--accent-on-ink); out
         <div class="cv"><a href="https://transtra.net" target="_blank" rel="noopener">transtra.net</a></div>
       </div>
     </div>
+
+    <div class="end-actions">
+      <button type="button" class="fs-btn" id="fs-exit" hidden>
+        <svg class="icon" aria-hidden="true"><use href="#i-minimize"/></svg>
+        Quitter le plein écran
+      </button>
+    </div>
   </div>
   <div class="stamp">
     <svg class="wordmark" aria-hidden="true"><use href="#w-transco"/></svg>
@@ -1318,6 +1380,67 @@ input[type="range"]:focus-visible { outline: 2px solid var(--accent-on-ink); out
     if (deck.scrollTop > 40) dismissHint();
   }, { passive: true });
   setTimeout(dismissHint, 9000);
+
+  // Sous le doigt il n'y a pas de clavier : l'aide doit parler de gestes.
+  if (hint && matchMedia("(hover: none)").matches) {
+    hint.textContent = "Glissez pour avancer";
+  }
+
+  /* ---- plein écran ----------------------------------------------------
+     La présentation se donne sur tablette, où la barre du navigateur vole
+     une bande à des slides calibrées sur 100dvh. Le bouton la rend à la
+     slide, s'efface une fois dedans, et revient sur la dernière pour sortir.
+     Les boutons sont livrés `hidden` : sans script, mieux vaut aucun bouton
+     qu'un bouton mort. */
+  var root = document.documentElement;
+  var btnEnter = document.getElementById("fs-enter");
+  var btnExit = document.getElementById("fs-exit");
+  var tip = document.getElementById("fs-tip");
+  var canFs = !!(root.requestFullscreen || root.webkitRequestFullscreen);
+
+  function fsOn() {
+    return !!(document.fullscreenElement || document.webkitFullscreenElement);
+  }
+  function syncFs() {
+    if (!canFs) {
+      // Safari iPad n'expose pas l'API : on affiche la marche à suivre
+      // (écran d'accueil) au lieu d'un bouton qui ne ferait rien.
+      if (tip) tip.hidden = false;
+      return;
+    }
+    var on = fsOn();
+    btnEnter.hidden = on;
+    btnExit.hidden = !on;
+  }
+  btnEnter.addEventListener("click", function () {
+    var fn = root.requestFullscreen || root.webkitRequestFullscreen;
+    if (!fn) return;
+    var r = fn.call(root);
+    // Un refus (geste non reconnu, réglage du navigateur) laisse le bouton.
+    if (r && r.catch) r.catch(function () {});
+  });
+  btnExit.addEventListener("click", function () {
+    var fn = document.exitFullscreen || document.webkitExitFullscreen;
+    if (fn) fn.call(document);
+  });
+
+  // Entrer ou sortir change la hauteur de la fenêtre : les slides sont
+  // recalibrées et le défilement retombe entre deux. On se recale sur la
+  // slide en cours — y compris quand la sortie vient de la touche Échap.
+  function onFsChange() {
+    var snaps = deck.scrollHeight > deck.clientHeight + 1;
+    var i = snaps ? currentIndex() : -1;
+    syncFs();
+    if (i < 0) return;
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        deck.scrollTo({ top: slides[i].offsetTop, behavior: "auto" });
+      });
+    });
+  }
+  document.addEventListener("fullscreenchange", onFsChange);
+  document.addEventListener("webkitfullscreenchange", onFsChange);
+  syncFs();
 
   /* ---- calculateur : le directeur donne son nombre, le prix apparaît -- */
   var num = document.getElementById("students");
