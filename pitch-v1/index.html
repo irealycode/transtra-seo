@@ -764,7 +764,7 @@ input[type="range"]:focus-visible { outline: 2px solid var(--accent-on-ink); out
 
     <div class="cover-meta">
       <span><b>Sohaib Boulaich</b> · Fondateur</span>
-      <span>Écoles de <b>Rabat</b></span>
+      <span>Écoles de <b id="city">Rabat</b></span>
       <span><b>2026 – 2027</b></span>
     </div>
   </div>
@@ -1351,6 +1351,13 @@ input[type="range"]:focus-visible { outline: 2px solid var(--accent-on-ink); out
   deck.addEventListener("scroll", updateRail, { passive: true });
   window.addEventListener("scroll", updateRailWindow, { passive: true });
   updateRail();
+  let cityI = 0;
+  let cityChange = document.getElementById("city");
+  cityChange.onclick = function () {
+    let cities = ["Rabat", "Salé", "Tétouan"];
+    cityI = (cityI + 1) % cities.length;
+    cityChange.textContent = cities[cityI];
+  };
 
   /* ---- navigation clavier : la présentation se tient au clavier ------- */
   function currentIndex() {
